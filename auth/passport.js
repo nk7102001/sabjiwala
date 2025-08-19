@@ -99,7 +99,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
         process.env.DELIVERY_GOOGLE_CALLBACK_URL ||
-        'https://sabjiwala-x6y1.onrender.com/delivery/auth/google/callback',
+        'http://localhost:3000/delivery/auth/google/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

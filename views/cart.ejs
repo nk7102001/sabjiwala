@@ -11,7 +11,7 @@
 
   <main class="max-w-5xl mx-auto px-6 py-12">
     <h1 class="text-3xl font-extrabold text-green-700 mb-8">🛒 Your Cart</h1>
-    <div id="cart-container" class="bg-white shadow rounded-lg p-6"></div>
+    <div id="cart-container" class="bg-white shadow rounded-lg p-6 overflow-x-auto"></div>
   </main>
 
   <script>
@@ -61,18 +61,19 @@
 
       let total = 0;
       let html = `
-        <table class="table-auto w-full mb-6">
-          <thead>
-            <tr class="bg-green-100 text-left">
-              <th class="px-4 py-2">Product</th>
-              <th class="px-4 py-2">Vendor</th>
-              <th class="px-4 py-2">Price</th>
-              <th class="px-4 py-2">Quantity</th>
-              <th class="px-4 py-2">Subtotal</th>
-              <th class="px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div class="overflow-x-auto">
+          <table class="table-auto min-w-full border-collapse border border-gray-200 mb-6">
+            <thead>
+              <tr class="bg-green-100 text-left">
+                <th class="px-4 py-2 border border-gray-300">Product</th>
+                <th class="px-4 py-2 border border-gray-300">Vendor</th>
+                <th class="px-4 py-2 border border-gray-300">Price</th>
+                <th class="px-4 py-2 border border-gray-300">Quantity</th>
+                <th class="px-4 py-2 border border-gray-300">Subtotal</th>
+                <th class="px-4 py-2 border border-gray-300">Action</th>
+              </tr>
+            </thead>
+            <tbody>
       `;
 
       cart.forEach((item, index) => {
@@ -85,13 +86,13 @@
         const vendorName = String(item.vendorName || '');
 
         html += `
-          <tr class="border-b">
-            <td class="px-4 py-2">${productName}</td>
-            <td class="px-4 py-2">${vendorName}</td>
-            <td class="px-4 py-2">₹${priceNum}</td>
-            <td class="px-4 py-2">${qtyNum}</td>
-            <td class="px-4 py-2 font-semibold">₹${subtotal}</td>
-            <td class="px-4 py-2">
+          <tr class="border-b border-gray-300">
+            <td class="px-4 py-2 border border-gray-300">${productName}</td>
+            <td class="px-4 py-2 border border-gray-300">${vendorName}</td>
+            <td class="px-4 py-2 border border-gray-300">₹${priceNum}</td>
+            <td class="px-4 py-2 border border-gray-300">${qtyNum}</td>
+            <td class="px-4 py-2 border border-gray-300 font-semibold">₹${subtotal}</td>
+            <td class="px-4 py-2 border border-gray-300">
               <button onclick="removeFromCart(${index})"
                 class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                 Remove
@@ -102,8 +103,9 @@
       });
 
       html += `
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-between items-start sm:items-center">
           <span class="text-xl font-bold text-green-700">Total: ₹${total}</span>
       `;
