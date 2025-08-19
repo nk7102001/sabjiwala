@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Saved Addresses - Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col font-sans">
@@ -71,7 +72,7 @@
       <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-green-700">
         Add New Address
       </h2>
-      <form action="/address/saved" method="POST" class="space-y-4">
+      <form action="/address/saved" method="POST" class="space-y-4" novalidate>
         <!-- Input Fields -->
         <div>
           <label for="label" class="block font-semibold mb-1 text-gray-700">Label (Home, Office)</label>
