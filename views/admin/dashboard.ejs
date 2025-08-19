@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+
+  <!-- Heading + Quick Buttons -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+    <h1 class="text-3xl font-bold text-green-700">Admin Dashboard</h1>
+
+    <!-- 🔗 Quick Access Buttons -->
+    <div class="flex flex-wrap gap-2">
+      <a href="/admin/reports"
+         class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded text-sm shadow">
+        📊 View Reports
+      </a>
+      <a href="/admin/sellers"
+         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm shadow">
+        🛒 Sellers List
+      </a>
+      <a href="/admin/seller"
+         class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded text-sm shadow">
+        👤 Seller Details
+      </a>
+      <!-- 🆕 Users Button -->
+      <a href="/admin/users"
+         class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm shadow">
+        👥 Users
+      </a>
+    </div>
+  </div>
+
+  <!-- ✅ Analytics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="text-sm text-gray-500">Pending Products</h2>
+      <p class="text-2xl font-bold text-gray-800"><%= typeof pendingProducts !== 'undefined' ? pendingProducts : 0 %></p>
+    </div>
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="text-sm text-gray-500">Total Sellers</h2>
+      <p class="text-2xl font-bold text-gray-800"><%= typeof sellerCount !== 'undefined' ? sellerCount : 0 %></p>
+    </div>
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="text-sm text-gray-500">Vendors Awaiting Approval</h2>
+      <p class="text-2xl font-bold text-gray-800">
+        <% const _sellersForCount = Array.isArray(sellers) ? sellers : []; %>
+        <%= _sellersForCount.filter(s => s.status !== 'Approved').length %>
+      </p>
+    </div>
+  </div>
+
+  <!-- ✅ Vendor Approval Table -->
+  <div class="bg-white shadow rounded mb-8 overflow-x-auto">
+    <h2 class="px-4 py-3 bg-green-200 text-green-900 font-semibold">Vendors Approval</h2>
+    <table class="w-full border-collapse text-left">
+      <thead class="bg-green-100">
+        <tr>
+          <th class="px-4 py-2 border">Name</th>
+          <th class="px-4 py-2 border">Shop Name</th>
+          <th class="px-4 py-2 border">Status</th>
+          <th class="px-4 py-2 border">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% const _sellers = Array.isArray(sellers) ? sellers : []; %>
+        <% if(_sellers.length === 0){ %>
+          <tr>
+            <td colspan="4" class="text-center py-4 text-gray-500">No sellers found</td>
+          </tr>
+        <% } else { %>
+          <% _sellers.forEach((seller) => { %>
+            <tr class="border-b">
+              <td class="px-4 py-2"><%= seller.name || '' %></td>
+              <td class="px-4 py-2"><%= seller.shopName || '' %></td>
+              <td class="px-4 py-2 font-semibold <%= seller.status === 'Approved' ? 'text-green-600' : 'text-yellow-600' %>">
+                <%= seller.status || 'Pending' %>
+              </td>
+              <td class="px-4 py-2 flex gap-2">
+                <% if (seller.status !== 'Approved') { %>
+                  <form action="/admin/sellers/<%= seller._id %>/approve" method="POST">
+                    <button class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
+                      Approve
+                    </button>
+                  </form>
+                  <form action="/admin/sellers/<%= seller._id %>/reject" method="POST">
+                    <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
+                      Reject
+                    </button>
+                  </form>
+                <% } else { %>
+                  <span class="text-gray-500">—</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ✅ Recent Orders Preview -->
+  <div class="bg-white shadow rounded overflow-x-auto">
+    <h2 class="px-4 py-3 bg-green-200 text-green-900 font-semibold">Recent Orders</h2>
+    <table class="w-full border-collapse text-left">
+      <thead class="bg-green-100">
+        <tr>
+          <th class="px-4 py-2 border">Order ID</th>
+          <th class="px-4 py-2 border">Customer</th>
+          <th class="px-4 py-2 border">Total</th>
+          <th class="px-4 py-2 border">Status</th>
+          <th class="px-4 py-2 border">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% const _orders = Array.isArray(orders) ? orders : []; %>
+        <% if(_orders.length === 0) { %>
+          <tr>
+            <td colspan="5" class="text-center py-4 text-gray-500">No recent orders</td>
+          </tr>
+        <% } else { %>
+          <% _orders.forEach((order) => { %>
+            <tr class="border-b">
+              <td class="px-4 py-2"><%= order._id %></td>
+              <td class="px-4 py-2"><%= (order.guestInfo && order.guestInfo.name) || (order.user && order.user.name) || 'Guest' %></td>
+              <td class="px-4 py-2 font-bold">₹<%= Number(order.total || 0) %></td>
+              <td class="px-4 py-2"><%= order.status || '' %></td>
+              <td class="px-4 py-2"><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '' %></td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+    <!-- Link to All Orders Page -->
+    <div class="p-4">
+      <a href="/admin/orders" class="text-green-700 hover:underline">View All Orders →</a>
+    </div>
+  </div>
+
+</body>
+</html>

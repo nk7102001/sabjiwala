@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Seller Details</title>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-6 bg-gray-50">
+  <h1 class="text-2xl font-bold mb-6 text-green-700">Seller Details</h1>
+
+  <div class="bg-white shadow rounded p-4 mb-6">
+    <p><strong>Name:</strong> <%= (seller && seller.name) ? seller.name : '' %></p>
+    <p><strong>Shop Name:</strong> <%= (seller && seller.shopName) ? seller.shopName : '' %></p>
+    <p><strong>Email:</strong> <%= (seller && seller.email) ? seller.email : '' %></p>
+    <p><strong>Phone:</strong> <%= (seller && seller.phone) ? seller.phone : 'N/A' %></p>
+    <p><strong>City:</strong> <%= (seller && seller.city) ? seller.city : 'N/A' %></p>
+    <p><strong>Status:</strong> <%= (seller && seller.status) ? seller.status : 'Pending' %></p>
+    <p><strong>Blocked?</strong> <%= (seller && seller.isBlocked) ? 'Yes' : 'No' %></p>
+    <p><strong>Joined on:</strong> <%= (seller && seller.createdAt) ? new Date(seller.createdAt).toLocaleDateString() : '' %></p>
+  </div>
+
+  <% const _products = (seller && Array.isArray(seller.products)) ? seller.products : []; %>
+  <% if (_products.length > 0) { %>
+    <h2 class="text-xl font-semibold mb-4">Products</h2>
+    <ul class="bg-white shadow rounded p-4">
+      <% _products.forEach((p) => { %>
+        <li class="border-b py-2">
+          <%= p.name || 'Product' %> - ₹<%= (p.price !== undefined && p.price !== null) ? p.price : 0 %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <p class="text-gray-500">No products uploaded by this seller.</p>
+  <% } %>
+
+  <a href="/admin/sellers" class="mt-6 inline-block text-green-700 hover:underline">← Back to Sellers List</a>
+</body>
+</html>

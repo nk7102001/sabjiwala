@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sabjiwala - Home</title>
+  <meta name="description" content="Discover local vegetable vendors on Sabjiwala. Search shops, view ratings, and order fresh produce delivered to your doorstep." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background-color: #22c55e; border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: #f0fdf4; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- ✅ Navbar -->
+  <%- include('partials/navbar') %>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 min-h-screen" role="main">
+
+    <!-- 🔍 Search Bar -->
+    <div class="flex flex-col sm:flex-row justify-center items-stretch max-w-3xl mx-auto mb-10 sm:mb-16 gap-3 sm:gap-0">
+      <input
+        type="text" id="vendorSearch"
+        placeholder="Vendor ka naam search karein..."
+        class="flex-grow border border-green-400 rounded-lg sm:rounded-l-lg sm:rounded-r-none px-5 py-3 text-base sm:text-lg placeholder-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600 transition"
+      />
+      <button
+        type="button"
+        class="bg-green-600 text-white font-semibold px-6 sm:px-7 py-3 rounded-lg sm:rounded-l-none sm:rounded-r-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-1 transition"
+      >
+        Search
+      </button>
+    </div>
+
+    <!-- Heading -->
+    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-6 sm:mb-10 text-green-700 text-center tracking-wide drop-shadow-sm">
+      Our Vendors
+    </h2>
+
+    <!-- No Results Message -->
+    <p id="noResultsMsg" class="hidden text-center text-gray-500 text-lg mb-6">No vendors found.</p>
+
+    <!-- Vendors Grid -->
+    <section id="vendorList" aria-label="Vendors List"
+             class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8 max-w-7xl mx-auto">
+      <% sellers.forEach((vendor) => { %>
+        <a href="/vendor/<%= vendor._id %>"
+           class="vendor-card group block bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+           data-name="<%= (vendor.shopName || '').toLowerCase() %>">
+          <div class="aspect-[4/3] relative overflow-hidden">
+            <% if (vendor.shopPhoto) { %>
+              <img
+                src="<%= vendor.shopPhoto %>"
+                alt="<%= vendor.shopName %>"
+                class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+            <% } else { %>
+              <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
+                No Image
+              </div>
+            <% } %>
+          </div>
+          <div class="text-center p-4">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">
+              <%= vendor.shopName %>
+            </h3>
+
+            <!-- ⭐ Vendor Rating -->
+            <% if (vendor.avgRating) { %>
+              <p class="text-yellow-500 mt-1">⭐ <%= vendor.avgRating.toFixed(1) %></p>
+            <% } else { %>
+              <p class="text-gray-400 mt-1">No ratings</p>
+            <% } %>
+          </div>
+        </a>
+      <% }) %>
+    </section>
+  </main>
+
+  <!-- ✅ Footer -->
+  <%- include('partials/footer') %>
+
+  <!-- 📜 Live Search Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById("vendorSearch");
+      const vendorCards = document.querySelectorAll(".vendor-card");
+      const noResultsMsg = document.getElementById("noResultsMsg");
+
+      function filterVendors() {
+        const query = (searchInput.value || "").toLowerCase().trim();
+        let anyVisible = false;
+
+        vendorCards.forEach((card) => {
+          const vendorName = (card.dataset.name || "");
+          if (vendorName.includes(query)) {
+            card.style.display = "block";
+            anyVisible = true;
+          } else {
+            card.style.display = "none";
+          }
+        });
+
+        // Toggle No Results Message
+        noResultsMsg.classList.toggle("hidden", anyVisible);
+      }
+
+      searchInput.addEventListener("input", filterVendors);
+    });
+  </script>
+
+</body>
+</html>

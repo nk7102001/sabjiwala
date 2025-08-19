@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seller Management - Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- ✅ Navbar -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full px-3 sm:px-6 lg:px-8 py-6 sm:py-10" role="main" aria-labelledby="pageTitle">
+
+    <!-- Page Title -->
+    <h1 id="pageTitle" class="text-2xl sm:text-3xl font-extrabold text-green-700 mb-6">
+      All Sellers
+    </h1>
+
+    <!-- Search Bar -->
+    <% const _search = typeof search !== 'undefined' ? search : ''; %>
+    <form method="GET"
+          class="bg-white shadow-md rounded-lg p-4 flex flex-col sm:flex-row gap-3 mb-6">
+      <input type="text" name="search" placeholder="Name, Shop or Email"
+             value="<%= _search || '' %>"
+             class="border rounded px-3 py-2 w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-green-600" />
+      <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+        Search
+      </button>
+    </form>
+
+    <!-- Table Wrapper -->
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+      <% const _sellers = Array.isArray(sellers) ? sellers : []; %>
+      <table class="w-full min-w-[800px] border-collapse text-left">
+        <thead class="bg-green-200 text-gray-900">
+          <tr>
+            <th class="px-4 py-2 border">Shop/Name</th>
+            <th class="px-4 py-2 border">Email</th>
+            <th class="px-4 py-2 border">City</th>
+            <th class="px-4 py-2 border">Status</th>
+            <th class="px-4 py-2 border">Blocked?</th>
+            <th class="px-4 py-2 border">Joined</th>
+            <th class="px-4 py-2 border text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (_sellers.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center py-4 text-gray-500">No sellers found</td>
+            </tr>
+          <% } else { %>
+            <% _sellers.forEach((s) => { %>
+              <tr class="border-b hover:bg-green-50">
+                <td class="px-4 py-2 font-semibold text-sm sm:text-base"><%= s.shopName || s.name || '' %></td>
+                <td class="px-4 py-2 text-sm sm:text-base break-words"><%= s.email || '' %></td>
+                <td class="px-4 py-2 text-sm sm:text-base"><%= s.city || '' %></td>
+                <td class="px-4 py-2 text-sm sm:text-base">
+                  <% if (s.status === 'Approved') { %>
+                    <span class="text-green-700 font-bold">Approved</span>
+                  <% } else { %>
+                    <span class="text-orange-600 font-bold">Pending</span>
+                  <% } %>
+                </td>
+                <td class="px-4 py-2 text-sm sm:text-base">
+                  <% if (s.isBlocked) { %>
+                    <span class="text-red-600 font-semibold">Blocked</span>
+                  <% } else { %>
+                    <span class="text-green-600 font-semibold">Active</span>
+                  <% } %>
+                </td>
+                <td class="px-4 py-2 text-sm sm:text-base">
+                  <%= s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '' %>
+                </td>
+                <td class="px-4 py-2 flex flex-wrap justify-center gap-2">
+
+                  <!-- Approve Button -->
+                  <% if (s.status !== 'Approved') { %>
+                    <form action="/admin/sellers/<%= s._id %>/approve" method="POST">
+                      <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
+                        Approve
+                      </button>
+                    </form>
+                  <% } %>
+
+                  <!-- Block/Unblock Button -->
+                  <% if (!s.isBlocked) { %>
+                    <form action="/admin/sellers/<%= s._id %>/block" method="POST">
+                      <button class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                        Block
+                      </button>
+                    </form>
+                  <% } else { %>
+                    <form action="/admin/sellers/<%= s._id %>/unblock" method="POST">
+                      <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
+                        Unblock
+                      </button>
+                    </form>
+                  <% } %>
+
+                  <!-- 🆕 View Details Button -->
+                  <a href="/admin/sellers/<%= s._id %>"
+                     class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 inline-block">
+                    View Details
+                  </a>
+
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- ✅ Footer -->
+  <%- include('../partials/footer') %>
+
+</body>
+</html>

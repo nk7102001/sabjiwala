@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sales Analytics - <%= (seller && (seller.shopName || seller.name)) ? (seller.shopName || seller.name) : 'Seller' %> | Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- ✅ Navbar -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full px-3 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-7xl mx-auto" role="main">
+
+    <!-- Page Heading -->
+    <h1 class="text-2xl sm:text-3xl font-extrabold text-green-700 mb-6">
+      Sales Analytics - <span class="text-gray-800"><%= (seller && (seller.shopName || seller.name)) ? (seller.shopName || seller.name) : 'Seller' %></span>
+    </h1>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-8">
+      <div class="bg-white shadow-md p-4 sm:p-5 rounded-lg hover:shadow-lg transition">
+        <p class="text-gray-500 text-sm sm:text-base">Total Orders</p>
+        <p class="text-2xl sm:text-3xl font-bold"><%= (summary && summary.totalOrders) || 0 %></p>
+      </div>
+      <div class="bg-white shadow-md p-4 sm:p-5 rounded-lg hover:shadow-lg transition">
+        <p class="text-gray-500 text-sm sm:text-base">Pending Orders</p>
+        <p class="text-2xl sm:text-3xl font-bold text-yellow-600"><%= (summary && summary.pendingOrders) || 0 %></p>
+      </div>
+      <div class="bg-white shadow-md p-4 sm:p-5 rounded-lg hover:shadow-lg transition">
+        <p class="text-gray-500 text-sm sm:text-base">Completed Orders</p>
+        <p class="text-2xl sm:text-3xl font-bold text-green-600"><%= (summary && summary.completedOrders) || 0 %></p>
+      </div>
+      <div class="bg-white shadow-md p-4 sm:p-5 rounded-lg hover:shadow-lg transition">
+        <p class="text-gray-500 text-sm sm:text-base">Total Earnings</p>
+        <p class="text-2xl sm:text-3xl font-bold text-blue-600">₹<%= (summary && summary.totalEarnings) || 0 %></p>
+      </div>
+    </div>
+
+    <!-- Recent Sales Table -->
+    <h2 class="text-lg sm:text-xl font-semibold mb-4">Recent Sales</h2>
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+      <table class="w-full min-w-[700px] text-left border-collapse">
+        <thead class="bg-green-200 text-gray-900">
+          <tr>
+            <th class="px-4 py-2 border text-sm sm:text-base">Customer</th>
+            <th class="px-4 py-2 border text-sm sm:text-base">Product</th>
+            <th class="px-4 py-2 border text-sm sm:text-base">Qty</th>
+            <th class="px-4 py-2 border text-sm sm:text-base">Price</th>
+            <th class="px-4 py-2 border text-sm sm:text-base">Subtotal</th>
+            <th class="px-4 py-2 border text-sm sm:text-base">Status</th>
+            <th class="px-4 py-2 border text-sm sm:text-base">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% const _recent = Array.isArray(recentOrders) ? recentOrders : []; %>
+          <% if (_recent.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center py-4 text-gray-500">
+                No recent orders found
+              </td>
+            </tr>
+          <% } else { %>
+            <% _recent.forEach((order) => { %>
+              <tr class="border-b hover:bg-green-50">
+                <td class="px-4 py-2 text-sm sm:text-base"><%= order.customerName || '' %></td>
+                <td class="px-4 py-2 text-sm sm:text-base"><%= order.productName || '' %></td>
+                <td class="px-4 py-2 text-sm sm:text-base"><%= order.qty || 0 %></td>
+                <td class="px-4 py-2 text-sm sm:text-base">₹<%= Number(order.price || 0) %></td>
+                <td class="px-4 py-2 text-sm sm:text-base">₹<%= Number(order.subtotal || 0) %></td>
+                <td class="px-4 py-2 text-sm sm:text-base"><%= order.status || '' %></td>
+                <td class="px-4 py-2 text-sm sm:text-base">
+                  <%= order.createdAt ? new Date(order.createdAt).toDateString() : '' %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- ✅ Footer -->
+  <%- include('../partials/footer') %>
+
+</body>
+</html>

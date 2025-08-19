@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Help Centre - Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <%- include('partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full px-3 sm:px-6 lg:px-8 py-8 sm:py-14" role="main">
+    <section class="bg-white p-5 sm:p-8 md:p-10 rounded-lg shadow-lg w-full max-w-4xl mx-auto">
+      
+      <!-- Page Title -->
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-green-700 mb-6 sm:mb-10">
+        Help Centre
+      </h1>
+
+      <!-- FAQ Section -->
+      <section>
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4">Frequently Asked Questions</h2>
+        <div class="space-y-4">
+          <details class="border border-green-300 rounded p-4">
+            <summary class="font-semibold cursor-pointer text-sm sm:text-base">
+              How do I place an order?
+            </summary>
+            <p class="mt-2 text-gray-700 text-sm sm:text-base">
+              Browse through our fresh vegetables and fruits, add items to your cart, and proceed to checkout.
+            </p>
+          </details>
+
+          <details class="border border-green-300 rounded p-4">
+            <summary class="font-semibold cursor-pointer text-sm sm:text-base">
+              What payment methods are accepted?
+            </summary>
+            <p class="mt-2 text-gray-700 text-sm sm:text-base">
+              We accept credit/debit cards, net banking, UPI, and cash on delivery.
+            </p>
+          </details>
+
+          <details class="border border-green-300 rounded p-4">
+            <summary class="font-semibold cursor-pointer text-sm sm:text-base">
+              How can I track my order?
+            </summary>
+            <p class="mt-2 text-gray-700 text-sm sm:text-base">
+              After placing your order, go to 
+              <a href="/orders" class="text-green-600 underline">My Orders</a> 
+              to see the status and tracking details.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <!-- Contact Support -->
+      <section class="mt-10 sm:mt-12">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4">Contact Support</h2>
+        <p class="mb-3 text-sm sm:text-base">
+          If you can’t find what you’re looking for, feel free to reach out to us:
+        </p>
+        <ul class="list-disc list-inside text-gray-700 space-y-1 text-sm sm:text-base">
+          <li>
+            Email:
+            <a href="mailto:support@sabjiwala.com" class="text-green-600 underline">
+              support@sabjiwala.com
+            </a>
+          </li>
+          <li>
+            Phone:
+            <a href="tel:+919876543210" class="text-green-600 underline">
+              +91 9876543210
+            </a>
+          </li>
+          <li>Customer Care Hours: Mon - Sat, 9 AM - 7 PM</li>
+        </ul>
+      </section>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <%- include('partials/footer') %>
+</body>
+</html>

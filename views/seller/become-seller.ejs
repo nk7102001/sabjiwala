@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Become a Seller - Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- ✅ Navbar -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Main Container -->
+  <main class="flex-grow w-full px-3 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-2xl mx-auto" role="main" aria-labelledby="pageTitle">
+
+    <!-- Page Title -->
+    <h1 id="pageTitle" class="text-2xl sm:text-3xl font-extrabold text-green-700 mb-6 sm:mb-8">
+      Become a Seller
+    </h1>
+
+    <!-- Error Message -->
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm sm:text-base">
+        <%= error %>
+      </p>
+    <% } %>
+
+    <!-- Success Message -->
+    <% if (typeof success !== 'undefined' && success) { %>
+      <p class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4 text-sm sm:text-base">
+        <%= success %>
+      </p>
+    <% } %>
+
+    <!-- Seller Registration Form -->
+    <form action="/become-seller" method="POST" enctype="multipart/form-data"
+          class="space-y-4 bg-white shadow-md rounded-lg p-5 sm:p-6" novalidate>
+
+      <!-- Personal Info -->
+      <div>
+        <label for="name" class="block font-medium mb-1 text-gray-700">Your Name</label>
+        <input id="name" name="name" placeholder="Your Name" required
+               class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+      </div>
+
+      <div>
+        <label for="email" class="block font-medium mb-1 text-gray-700">Email</label>
+        <input id="email" name="email" type="email" placeholder="Email" required
+               class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+      </div>
+
+      <div>
+        <label for="phone" class="block font-medium mb-1 text-gray-700">Phone Number</label>
+        <input id="phone" name="phone" placeholder="Phone Number" required
+               class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+      </div>
+
+      <!-- Shop Info -->
+      <div>
+        <label for="shopName" class="block font-medium mb-1 text-gray-700">Shop Name</label>
+        <input id="shopName" name="shopName" placeholder="Shop Name" required
+               class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+      </div>
+
+      <div>
+        <label for="address" class="block font-medium mb-1 text-gray-700">Shop Address</label>
+        <textarea id="address" name="address" placeholder="Shop Address" required
+                  class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base"></textarea>
+      </div>
+
+      <div>
+        <label for="city" class="block font-medium mb-1 text-gray-700">City</label>
+        <input id="city" name="city" placeholder="City" required
+               class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+      </div>
+
+      <div>
+        <label for="state" class="block font-medium mb-1 text-gray-700">State</label>
+        <input id="state" name="state" placeholder="State" required
+               class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+      </div>
+
+      <!-- Business Type -->
+      <div>
+        <label for="businessType" class="block font-medium mb-1 text-gray-700">Business Type</label>
+        <select id="businessType" name="businessType" required
+                class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base">
+          <option value="">Select Business Type</option>
+          <option>Local Vendor</option>
+          <option>Farmer</option>
+          <option>Wholesaler</option>
+        </select>
+      </div>
+
+      <!-- Uploads -->
+      <div>
+        <label class="block font-medium mb-1 text-gray-700" for="idProof">ID Proof</label>
+        <input id="idProof" type="file" name="idProof" accept="image/*"
+               class="w-full border border-gray-300 px-4 py-2 rounded text-sm sm:text-base" />
+      </div>
+
+      <div>
+        <label class="block font-medium mb-1 text-gray-700" for="shopPhoto">Shop Photo</label>
+        <input id="shopPhoto" type="file" name="shopPhoto" accept="image/*"
+               class="w-full border border-gray-300 px-4 py-2 rounded text-sm sm:text-base" />
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="password" class="block font-medium mb-1 text-gray-700">Create Password</label>
+        <input id="password" name="password" type="password" placeholder="Create Password" required minlength="6"
+               class="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+      </div>
+
+      <!-- Buttons -->
+      <button type="submit"
+              class="w-full bg-green-600 text-white px-6 py-2.5 rounded hover:bg-green-700 transition font-semibold text-sm sm:text-base">
+        Register
+      </button>
+
+      <a href="/seller/login"
+         class="block text-center bg-blue-600 text-white px-6 py-2.5 rounded hover:bg-blue-700 transition font-semibold text-sm sm:text-base">
+        Already a Seller? Login here
+      </a>
+    </form>
+
+  </main>
+
+  <!-- ✅ Footer -->
+  <%- include('../partials/footer') %>
+
+</body>
+</html>

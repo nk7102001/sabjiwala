@@ -1,0 +1,193 @@
+<nav class="bg-white shadow-md sticky top-0 z-50"
+     x-data="{ mobileMenuOpen: false }"
+     @keydown.escape.stop="mobileMenuOpen = false">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+
+      <!-- Logo -->
+      <div class="flex-shrink-0 flex items-center">
+        <a href="/" class="flex items-center space-x-1 select-none" @click.stop>
+          <span class="text-3xl font-extrabold text-green-600 leading-none transition-colors duration-300 hover:text-green-700">
+            Sabji
+          </span>
+          <span class="text-3xl font-extrabold text-yellow-500 leading-none transition-colors duration-300 hover:text-yellow-600">
+            wala
+          </span>
+        </a>
+      </div>
+
+      <!-- Desktop nav -->
+      <div class="hidden md:flex space-x-12 font-medium text-gray-700 items-center">
+        <a href="/" class="relative group px-2 py-1 rounded-md hover:text-green-600" @click.stop>
+          Home
+          <span class="absolute left-0 bottom-0 w-0 group-hover:w-full h-0.5 bg-green-600 rounded transition-all duration-300"></span>
+        </a>
+
+        <!-- Desktop Categories dropdown -->
+        <div class="relative" x-data="{ open: false }" @mouseleave="open = false">
+          <button 
+            @mouseenter="open = true"
+            @focus="open = true"
+            @click.stop
+            class="inline-flex items-center px-3 py-1 rounded-md text-gray-700 hover:text-green-600 transition-colors duration-200"
+            :aria-expanded="open.toString()" aria-haspopup="true">
+            Categories
+            <svg class="ml-1 w-5 h-5 text-gray-500 transition-transform duration-300" :class="{'rotate-180': open}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div 
+            x-show="open"
+            x-transition
+            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white border border-gray-200 ring-1 ring-black ring-opacity-5 z-40"
+            style="display:none"
+            @pointerdown.stop>
+            <div class="py-1 max-h-60 overflow-auto scrollbar-thin scrollbar-thumb-green-300 scrollbar-track-green-100 scrollbar-thumb-rounded">
+              <% const _cats = (typeof sabjiCategories !== 'undefined' && Array.isArray(sabjiCategories)) ? sabjiCategories : []; %>
+              <% _cats.forEach((cat) => { %>
+                <a href="/products/<%= cat.slug %>" class="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-700 text-sm whitespace-nowrap" @click.stop>
+                  <%= cat.name %>
+                </a>
+              <% }) %>
+              <div class="border-t border-gray-200 my-1"></div>
+              <a href="/categories" class="block px-4 py-2 font-semibold text-green-700 hover:bg-green-100 text-sm" @click.stop>All Categories</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cart -->
+        <a href="/cart" class="flex items-center px-3 py-1 rounded-md text-gray-700 hover:text-green-600 relative group" @click.stop>
+          <svg class="w-5 h-5 mr-1 stroke-current" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4"></path>
+          </svg>
+          Cart
+          <span id="cart-count" class="absolute -top-2 -right-5 bg-red-500 text-white text-xs font-bold w-5 h-5 hidden items-center justify-center rounded-full">0</span>
+          <span class="absolute left-0 -bottom-1 w-0 group-hover:w-full h-0.5 bg-green-600 rounded transition-all duration-300"></span>
+        </a>
+
+        <!-- Desktop Account -->
+        <% if (user) { %>
+          <div class="relative" x-data="{ open: false }" @mouseleave="open = false">
+            <button
+              @click.stop="open = !open"
+              class="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-green-50"
+              aria-haspopup="true"
+              :aria-expanded="open.toString()">
+              My Account
+              <svg class="ml-2 h-5 w-5 text-gray-500 transition-transform duration-300" :class="{'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div
+              x-show="open"
+              x-transition
+              class="absolute right-0 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 border border-gray-200 z-50"
+              style="display:none"
+              @pointerdown.stop>
+              <a href="/orders" class="block px-4 py-2 text-gray-700 hover:bg-green-100 text-sm" @click.stop>My Orders</a>
+              <a href="/profile/edit" class="block px-4 py-2 text-gray-700 hover:bg-green-100 text-sm" @click.stop>Edit Profile</a>
+              <a href="/coupons" class="block px-4 py-2 text-gray-700 hover:bg-green-100 text-sm" @click.stop>Coupons</a>
+              <a href="/help-center" class="block px-4 py-2 text-gray-700 hover:bg-green-100 text-sm" @click.stop>Help Centre</a>
+              <a href="/address/saved" class="block px-4 py-2 text-gray-700 hover:bg-green-100 text-sm" @click.stop>Saved Address</a>
+              <div class="border-t border-gray-200 my-1"></div>
+              <a href="/logout" class="block px-4 py-2 text-red-600 hover:bg-red-100 font-semibold text-sm" @click.stop>Logout</a>
+            </div>
+          </div>
+        <% } else { %>
+          <a href="/login" class="px-4 py-1 border border-green-600 rounded-md text-green-600 font-semibold hover:bg-green-600 hover:text-white transition duration-300" @click.stop>
+            My Account
+          </a>
+        <% } %>
+      </div>
+
+      <!-- Burger (mobile) -->
+      <div class="md:hidden flex items-center">
+        <button
+          @click.stop="mobileMenuOpen = !mobileMenuOpen"
+          aria-label="Toggle menu"
+          class="focus:outline-none focus:ring-2 focus:ring-green-600 rounded-md p-1 hover:bg-green-100">
+          <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+            <path :class="{'hidden': mobileMenuOpen, 'inline-flex': !mobileMenuOpen }" class="inline-flex" d="M4 6h16M4 12h16M4 18h16"/>
+            <path :class="{'hidden': !mobileMenuOpen, 'inline-flex': mobileMenuOpen }" class="hidden" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu panel -->
+  <div
+    x-show="mobileMenuOpen"
+    x-transition
+    class="md:hidden bg-white border-t border-gray-200 shadow-lg overflow-y-auto max-h-[calc(100vh-4rem)]"
+    style="display:none"
+    @pointerdown.away="mobileMenuOpen = false"
+    @pointerdown.stop>
+    <div class="flex flex-col py-6 px-4 space-y-2 text-lg font-medium">
+      <a href="/" class="py-2 px-2 rounded hover:bg-green-50 hover:text-green-600" @click.stop>Home</a>
+      <div x-data="{ openCat: false }" @pointerdown.stop>
+        <button
+          @click.stop="openCat = !openCat"
+          class="flex items-center w-full py-2 px-2 rounded hover:bg-green-50 hover:text-green-600 justify-between">
+          <span>Categories</span>
+          <svg class="ml-2 w-5 h-5 text-gray-500 transition-transform" :class="{'rotate-180': openCat}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div x-show="openCat" class="pl-4 py-1 space-y-1" style="display:none" @pointerdown.stop>
+          <% const _mcats = (typeof sabjiCategories !== 'undefined' && Array.isArray(sabjiCategories)) ? sabjiCategories : []; %>
+          <% _mcats.forEach((cat) => { %>
+            <a href="/products/<%= cat.slug %>" class="block py-1 rounded hover:bg-green-100 hover:text-green-700 text-base" @click.stop><%= cat.name %></a>
+          <% }) %>
+          <a href="/categories" class="block py-1 font-semibold text-green-700 hover:bg-green-100 text-base" @click.stop>All Categories</a>
+        </div>
+      </div>
+
+      <a href="/cart" class="py-2 px-2 rounded hover:bg-green-50 hover:text-green-600 flex items-center" @click.stop>
+        <svg class="w-5 h-5 mr-2 stroke-current" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 3h2l.4 2M7 13h10l4-8H5.4"></path>
+        </svg>
+        Cart
+        <span id="cart-count" class="ml-2 bg-red-500 text-white text-xs font-bold w-5 h-5 hidden items-center justify-center rounded-full">0</span>
+      </a>
+
+      <% if (user) { %>
+        <a href="/orders" class="py-2 px-2 rounded hover:bg-green-50 hover:text-green-600" @click.stop>My Orders</a>
+        <a href="/profile/edit" class="py-2 px-2 rounded hover:bg-green-50 hover:text-green-600" @click.stop>Edit Profile</a>
+        <a href="/coupons" class="py-2 px-2 rounded hover:bg-green-50 hover:text-green-600" @click.stop>Coupons</a>
+        <a href="/help-center" class="py-2 px-2 rounded hover:bg-green-50 hover:text-green-600" @click.stop>Help Centre</a>
+        <a href="/address/saved" class="py-2 px-2 rounded hover:bg-green-50 hover:text-green-600" @click.stop>Saved Address</a>
+        <a href="/logout" class="py-2 px-2 text-red-600 rounded hover:bg-red-50 hover:text-red-800 font-semibold" @click.stop>Logout</a>
+      <% } else { %>
+        <a href="/login" class="py-2 px-2 border border-green-600 text-green-600 rounded font-semibold hover:bg-green-100" @click.stop>My Account</a>
+      <% } %>
+    </div>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script>
+  function updateCartCount() {
+    let cart = [];
+    try {
+      cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (!Array.isArray(cart)) cart = [];
+    } catch {
+      cart = [];
+    }
+    const totalCount = cart.reduce((sum, item) => sum + (parseInt(item.qty, 10) || 0), 0);
+    const els = document.querySelectorAll("#cart-count");
+    els.forEach((el) => {
+      el.textContent = totalCount;
+      if (totalCount > 0) {
+        el.classList.remove("hidden");
+        el.style.display = "flex";
+      } else {
+        el.classList.add("hidden");
+        el.style.display = "none";
+      }
+    });
+  }
+  document.addEventListener("DOMContentLoaded", updateCartCount);
+  window.addEventListener("cartUpdated", updateCartCount);
+</script>

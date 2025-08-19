@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Delivery Dashboard | Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Scrollbar styling for order list */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #68d391; /* green-400 */
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #48bb78; /* green-500 */
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-green-50 to-white min-h-screen font-sans">
+
+  <div class="max-w-6xl mx-auto py-10 px-6">
+    <!-- Header -->
+    <header class="bg-green-700 text-white rounded-xl p-6 mb-10 shadow flex flex-col sm:flex-row items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-extrabold mb-1">
+          Welcome, <%= deliveryGuy ? deliveryGuy.name : "Delivery Guy" %>! 👋
+        </h1>
+        <p class="text-green-200 font-light">Your delivery dashboard</p>
+      </div>
+      <div class="flex items-center space-x-5 mt-5 sm:mt-0">
+        <img
+          src="<%= (deliveryGuy && deliveryGuy.profilePic) ? deliveryGuy.profilePic : '/img/avatar-delivery.png' %>"
+          alt="Profile picture"
+          class="w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover" />
+        <a href="/delivery/logout" class="bg-white text-green-700 px-5 py-2 rounded-lg font-bold shadow hover:bg-green-100 transition">
+          Logout
+        </a>
+      </div>
+    </header>
+
+    <!-- Main dashboard grid -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <!-- Active Orders -->
+      <div class="bg-white rounded-2xl p-6 shadow h-[400px] flex flex-col overflow-hidden">
+        <h2 class="text-xl font-bold text-green-800 mb-4 border-b pb-2">Active Orders</h2>
+
+        <% const _orders = Array.isArray(orders) ? orders : []; %>
+        <% if (_orders.length === 0) { %>
+          <p class="text-gray-400 mt-6 text-center flex-grow flex items-center justify-center">No active orders yet.</p>
+        <% } else { %>
+          <ul class="space-y-4 overflow-y-auto scrollbar-thin scrollbar-thumb-green-400 scrollbar-track-gray-100 flex-grow pr-2">
+            <% _orders.forEach((order) => { %>
+              <li class="p-4 rounded-xl border border-gray-200 hover:shadow-lg transition cursor-pointer flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-green-700 font-bold">Order ID: <%= order._id || order.id %></span>
+                  <span class="inline-block px-3 py-1 text-xs rounded-full font-semibold
+                    <%= order.status === 'Assigned' ? 'bg-blue-100 text-blue-800'
+                      : order.status === 'Accepted' ? 'bg-yellow-100 text-yellow-800'
+                      : order.status === 'Picked Up' ? 'bg-green-100 text-green-700'
+                      : order.status === 'Delivered' ? 'bg-gray-200 text-gray-700'
+                      : order.status === 'Cancelled' ? 'bg-red-100 text-red-800'
+                      : 'bg-gray-100 text-gray-600' %>">
+                    <%= order.status %>
+                  </span>
+                </div>
+
+                <p>
+                  <span class="font-semibold">Customer:</span>
+                  <% if (order.customer) { %>
+                    <%= order.customer %>
+                  <% } else if (order.user && order.user.name) { %>
+                    <%= order.user.name %>
+                  <% } else if (order.guestInfo && order.guestInfo.name) { %>
+                    <%= order.guestInfo.name %>
+                  <% } else { %>
+                    (Unknown)
+                  <% } %>
+                </p>
+
+                <p>
+                  <span class="font-semibold">Address:</span>
+                  <% if (order.address) { %>
+                    <%= order.address %>
+                  <% } else if (order.shippingAddress) { %>
+                    <%= order.shippingAddress.street %>, <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %>
+                  <% } %>
+                </p>
+
+                <p>
+                  <span class="font-semibold">Delivery Time:</span>
+                  <%= order.time || (order.createdAt && new Date(order.createdAt).toLocaleString()) %>
+                </p>
+
+                <p>
+                  <span class="font-semibold">Total:</span> &#8377;<%= Number(order.total || 0) %>
+                </p>
+
+                <!-- DELIVERY ACTION BUTTONS -->
+                <form action="/delivery/order/<%= order._id || order.id %>/status" method="POST" class="flex space-x-2 pt-2">
+                  <% if (order.status === 'Assigned') { %>
+                    <button type="submit" name="status" value="Accepted" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 font-medium">Accept</button>
+                    <button type="submit" name="status" value="Cancelled" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 font-medium">Decline</button>
+                  <% } else if (order.status === 'Accepted') { %>
+                    <button type="submit" name="status" value="Picked Up" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 font-medium">Picked Up</button>
+                  <% } else if (order.status === 'Picked Up') { %>
+                    <button type="submit" name="status" value="Delivered" class="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-800 font-medium">Delivered</button>
+                  <% } %>
+                </form>
+              </li>
+            <% }) %>
+          </ul>
+        <% } %>
+      </div>
+
+      <!-- Earnings -->
+      <div class="bg-white rounded-2xl p-6 shadow flex flex-col justify-center items-center">
+        <h2 class="text-xl font-bold text-green-800 mb-6 border-b pb-2 w-full text-center">Earnings</h2>
+        <p class="text-5xl font-extrabold text-green-700 mb-3">&#8377;0</p>
+        <p class="text-gray-500 tracking-wide">Today's earnings</p>
+      </div>
+
+      <!-- Notifications -->
+      <div class="bg-white rounded-2xl p-6 shadow h-[400px] flex flex-col overflow-hidden">
+        <h2 class="text-xl font-bold text-green-800 mb-4 border-b pb-2">Notifications</h2>
+        <ul class="gap-3 overflow-y-auto scrollbar-thin scrollbar-thumb-green-400 scrollbar-track-gray-100 flex-grow pr-2 text-gray-600 text-sm">
+          <li class="p-3 border border-gray-200 rounded-lg mb-3 bg-gray-50">No new notifications.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Profile & History -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+      <div class="bg-white rounded-2xl p-6 shadow">
+        <h2 class="text-xl font-bold text-green-800 mb-5">Profile Info</h2>
+        <ul class="space-y-3 text-gray-700 text-base">
+          <li><span class="font-semibold">Name:</span> <%= deliveryGuy ? (deliveryGuy.name || '') : '' %></li>
+          <li><span class="font-semibold">Mobile:</span> <%= deliveryGuy ? (deliveryGuy.mobile || '') : '' %></li>
+          <li><span class="font-semibold">Email:</span> <%= deliveryGuy ? (deliveryGuy.email || '') : '' %></li>
+        </ul>
+        <a href="/delivery/profile/edit" class="mt-7 inline-block bg-green-600 text-white py-2 px-5 rounded-lg font-semibold hover:bg-green-700 transition">
+          Edit Profile
+        </a>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow overflow-auto max-h-[300px]">
+        <h2 class="text-xl font-bold text-green-800 mb-5">Delivery History</h2>
+        <ul class="text-gray-700 text-sm space-y-3">
+          <li>No deliveries to show yet.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+</body>
+</html>

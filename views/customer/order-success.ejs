@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Success - Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- ✅ Navbar -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex flex-col items-center justify-center px-3 sm:px-6 lg:px-8 py-10 text-center" role="main" aria-labelledby="pageTitle">
+
+    <!-- Success Icon -->
+    <svg class="w-16 h-16 sm:w-20 sm:h-20 text-green-600 mb-6" fill="none" stroke="currentColor" stroke-width="2"
+         viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12l2 2l4-4m6 2a9 9 0 1 1-18 0a9 9 0 0 1 18 0z"/>
+    </svg>
+
+    <!-- Thank You Message -->
+    <h1 id="pageTitle" class="text-2xl sm:text-3xl font-extrabold text-green-700">
+      Thank you, <%= typeof name !== 'undefined' && name ? name : 'Customer' %>!
+    </h1>
+    
+    <p class="mt-4 text-gray-700 text-sm sm:text-base max-w-md">
+      Your order has been placed successfully. We’ll notify once it’s packed and shipped.
+    </p>
+
+    <!-- Continue Shopping -->
+    <a href="/"
+       class="mt-6 inline-block bg-green-600 text-white px-6 py-2 sm:px-8 sm:py-3 
+              rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 
+              focus:ring-green-700 focus:ring-offset-1 transition font-semibold text-sm sm:text-base">
+      Continue Shopping
+    </a>
+
+  </main>
+
+  <!-- ✅ Footer -->
+  <%- include('../partials/footer') %>
+
+</body>
+</html>

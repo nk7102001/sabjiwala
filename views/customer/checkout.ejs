@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Checkout - Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Razorpay Checkout Script -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-14 max-w-lg mx-auto" role="main" aria-labelledby="pageTitle">
+
+    <h1 id="pageTitle" class="text-2xl sm:text-3xl font-extrabold mb-6 text-green-700">
+      Checkout
+    </h1>
+
+    <!-- Order Summary -->
+    <div class="bg-white p-4 rounded shadow mb-6">
+      <h2 class="text-lg font-semibold mb-2">Order Summary</h2>
+      <% const _cart = Array.isArray(cart) ? cart : []; %>
+      <% if (_cart.length === 0) { %>
+        <p class="text-gray-500 text-sm sm:text-base">Your cart is empty.</p>
+      <% } else { %>
+        <ul class="mb-2 list-disc list-inside text-sm sm:text-base text-gray-700">
+          <% _cart.forEach((item) => { %>
+            <li>
+              <%= item.name %> (<%= item.vendorName || '-' %>) — Qty: <%= Number(item.qty || 0) %> @ ₹<%= Number(item.price || 0) %> = ₹<%= Number(item.subtotal || (Number(item.price||0) * Number(item.qty||0))) %>
+            </li>
+          <% }) %>
+        </ul>
+        <p class="text-xl font-bold text-gray-900">
+          Total: ₹<%= Number(total || 0) %>
+        </p>
+      <% } %>
+    </div>
+
+    <% /* login check: backend se customer variable pass ho (customer: req.user) */ %>
+    <% if (!customer) { %>
+      <p class="text-red-600 font-semibold mb-6 text-center">
+        Please <a href="/login" class="text-green-600 underline">login</a> to place your order.
+      </p>
+    <% } %>
+
+    <!-- COD/Online Payment Form -->
+    <form method="POST" action="/checkout" id="checkoutForm" class="bg-white shadow rounded p-6 space-y-4" <%= !customer ? 'onsubmit="return false;"' : '' %>>
+
+      <input name="name" placeholder="Full Name" required
+        class="border rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600"
+        value="<%= customer ? (customer.name || '') : '' %>" />
+
+      <input name="phone" placeholder="Phone Number" required
+        class="border rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600"
+        value="<%= customer ? (customer.mobile || customer.phone || '') : '' %>" />
+
+      <input name="email" type="email" placeholder="Email (optional)"
+        class="border rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600"
+        value="<%= customer ? (customer.email || '') : '' %>" />
+
+      <input name="address" placeholder="Street Address" required
+        class="border rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600" />
+
+      <input name="city" placeholder="City" required
+        class="border rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600" />
+
+      <input name="pincode" placeholder="Pincode" required
+        class="border rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600" />
+
+      <select name="paymentMethod" id="paymentMethod" required
+        class="border rounded w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600">
+        <option value="COD">Cash on Delivery</option>
+        <option value="Online">Online Payment</option>
+      </select>
+
+      <input type="hidden" name="paymentStatus" value="Unpaid" id="paymentStatusInput" />
+
+      <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition font-semibold" <%= !customer ? 'disabled' : '' %>>
+        Place Order
+      </button>
+    </form>
+
+  </main>
+
+  <!-- Footer -->
+  <%- include('../partials/footer') %>
+
+  <% if (customer) { %>
+  <script>
+    document.getElementById("checkoutForm").addEventListener("submit", async function(e) {
+      const method = document.getElementById("paymentMethod").value;
+
+      if (method === "Online") {
+        e.preventDefault();
+
+        // total value backend se directly aayegi
+        const amount = Number("<%= Number(total || 0) %>");
+        if (!amount || amount < 1) {
+          alert("Invalid order amount!");
+          return;
+        }
+
+        // Backend ko amount in rupees bhejna
+        let orderData = null;
+        try {
+          const orderRes = await fetch("/create-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount })
+          });
+          orderData = await orderRes.json();
+        } catch (err) {
+          alert("Failed to create order. Please try again.");
+          return;
+        }
+
+        if (!orderData || !orderData.id || !orderData.amount) {
+          alert("Razorpay order creation failed!");
+          return;
+        }
+
+        const options = {
+          key: "<%= razorpayKey %>",
+          amount: orderData.amount, // in paise
+          currency: "INR",
+          name: "Sabjiwala",
+          description: "Vegetable Order Payment",
+          order_id: orderData.id,
+          handler: function (response) {
+            // Optionally, you can verify payment on backend using response.razorpay_payment_id etc.
+            document.getElementById("paymentStatusInput").value = "Paid";
+            document.getElementById("checkoutForm").submit();
+          },
+          theme: { color: "#4CAF50" }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      }
+    });
+  </script>
+  <% } %>
+
+</body>
+</html>

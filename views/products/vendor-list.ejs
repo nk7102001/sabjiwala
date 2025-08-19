@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vendors selling <%= product && product.name ? product.name : 'Product' %> | Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- ✅ Navbar -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full px-3 sm:px-6 lg:px-8 py-6 sm:py-10 max-w-4xl mx-auto">
+    
+    <!-- Page Title -->
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-green-700 mb-6 sm:mb-8">
+      Vendors selling <span class="text-gray-800"><%= product && product.name ? product.name : '' %></span>
+    </h2>
+
+    <% const _vendors = Array.isArray(vendors) ? vendors : []; %>
+    <% if (_vendors.length === 0) { %>
+      <p class="text-gray-600 text-sm sm:text-base">
+        Is sabji ke liye abhi koi vendor uplabdh nahi hai.
+      </p>
+    <% } else { %>
+      <ul class="space-y-5 sm:space-y-6">
+        <% _vendors.forEach((vendor) => { 
+             const prod = (vendor && Array.isArray(vendor.products))
+               ? vendor.products.find((p) => p.product && product && p.product.toString() === product._id.toString())
+               : null;
+             if (!prod) return; // skip if product not found
+        %>
+        
+        <li class="bg-white shadow rounded-lg p-5 sm:p-6 flex flex-col gap-4"
+            data-vendor="<%= vendor._id %>"
+            data-product="<%= product && product._id ? product._id : '' %>">
+          
+          <!-- Vendor Details -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <span class="font-bold text-lg text-green-700"><%= vendor.shopName || vendor.name || 'Vendor' %></span>
+            <div class="text-gray-700 text-sm">
+              <span>📞 <%= vendor.phone || '-' %></span>
+              <span class="ml-4">📍 <%= vendor.address || '' %>, <%= vendor.city || '' %></span>
+            </div>
+          </div>
+
+          <!-- Price & Stock -->
+          <div class="font-semibold text-base sm:text-lg <%= Number(prod.availableQty || 0) > 0 ? 'text-yellow-700' : 'text-red-600' %>">
+            ₹<%= Number(prod.price || 0) %> / kg 
+            | Available: <%= Number(prod.availableQty || 0) %> kg
+            <% if (Number(prod.availableQty || 0) === 0) { %>
+              <span class="ml-2 px-2 py-1 text-xs sm:text-sm rounded bg-red-500 text-white">Out of Stock</span>
+            <% } %>
+          </div>
+
+          <!-- Rating -->
+          <div class="flex items-center text-yellow-500 text-sm font-medium">
+            ⭐ <%= (typeof prod.rating !== 'undefined' && prod.rating !== null) ? prod.rating : 'New' %>
+          </div>
+
+          <!-- Quantity Selector -->
+          <div class="flex items-center gap-3">
+            <button 
+              class="decrement bg-green-100 px-3 py-1 rounded-lg font-bold text-lg text-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              <%= Number(prod.availableQty || 0) === 0 ? 'disabled' : '' %>>-</button>
+            <input type="number"
+              min="1"
+              max="<%= Number(prod.availableQty || 0) %>"
+              value="1"
+              class="quantity-input w-16 text-center border border-green-300 rounded"
+              <%= Number(prod.availableQty || 0) === 0 ? 'disabled' : '' %> />
+            <button 
+              class="increment bg-green-100 px-3 py-1 rounded-lg font-bold text-lg text-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              <%= Number(prod.availableQty || 0) === 0 ? 'disabled' : '' %>>+</button>
+          </div>
+
+          <!-- Add to Cart -->
+          <% if (Number(prod.availableQty || 0) > 0) { %>
+            <form action="/cart/add" method="POST" class="flex flex-col sm:flex-row gap-2 mt-2">
+              <input type="hidden" name="vendorId" value="<%= vendor._id %>">
+              <input type="hidden" name="vendorName" value="<%= vendor.shopName || vendor.name || '' %>">
+              <input type="hidden" name="productId" value="<%= product && product._id ? product._id : '' %>">
+              <input type="hidden" name="productName" value="<%= product && product.name ? product.name : '' %>">
+              <input type="hidden" name="price" value="<%= Number(prod.price || 0) %>">
+
+              <input type="number" name="qty" min="1" max="<%= Number(prod.availableQty || 0) %>" value="1"
+                     class="w-16 text-center border border-green-300 rounded" />
+              <button type="submit"
+                      class="bg-green-600 text-white font-semibold px-4 py-2 rounded hover:bg-green-700 transition text-sm sm:text-base">
+                Add to Cart
+              </button>
+            </form>
+          <% } else { %>
+            <button class="bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed mt-2 text-sm sm:text-base" disabled>
+              Out of Stock
+            </button>
+          <% } %>
+        </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </main>
+
+  <!-- Quantity Scripts -->
+  <script>
+    document.querySelectorAll("li").forEach((container) => {
+      const minusBtn = container.querySelector(".decrement");
+      const plusBtn = container.querySelector(".increment");
+      const qtyInput = container.querySelector(".quantity-input");
+
+      if (minusBtn && plusBtn && qtyInput) {
+        minusBtn.addEventListener("click", () => {
+          let val = parseInt(qtyInput.value, 10) || 1;
+          if (val > 1) qtyInput.value = val - 1;
+        });
+        plusBtn.addEventListener("click", () => {
+          let val = parseInt(qtyInput.value, 10) || 1;
+          const max = parseInt(qtyInput.max, 10) || 1;
+          if (val < max) qtyInput.value = val + 1;
+        });
+      }
+    });
+  </script>
+
+  <!-- ✅ Footer -->
+  <%- include('../partials/footer') %>
+
+</body>
+</html>

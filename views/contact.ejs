@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Contact - Sabjiwala</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Get in touch with Sabjiwala. Ask questions, share feedback, or request support via our contact form, phone, or email." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-tr from-green-50 to-white min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <%- include('partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-14" role="main">
+    <section class="bg-white rounded-lg shadow-lg p-6 sm:p-10 md:p-14 text-gray-800 max-w-3xl mx-auto w-full">
+
+      <!-- Heading -->
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-green-700 mb-6 sm:mb-8 border-b-4 border-yellow-400 inline-block pb-2">
+        Contact Sabjiwala
+      </h1>
+
+      <!-- Optional Flash Messages -->
+      <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length) { %>
+        <div class="mb-6 rounded-md bg-green-50 p-4 text-green-700 text-sm sm:text-base">
+          <%= Array.isArray(success_msg) ? success_msg.join('<br/>') : success_msg %>
+        </div>
+      <% } %>
+      <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length) { %>
+        <div class="mb-6 rounded-md bg-red-50 p-4 text-red-700 text-sm sm:text-base">
+          <%= Array.isArray(error_msg) ? error_msg.join('<br/>') : error_msg %>
+        </div>
+      <% } %>
+
+      <!-- Intro Text -->
+      <p class="text-base sm:text-lg leading-relaxed mb-8 sm:mb-10">
+        If there are any questions or help is needed, use the form below, or reach us at the provided contact details.
+      </p>
+
+      <!-- Contact Form -->
+      <form action="/contact" method="POST" class="space-y-5 sm:space-y-6" novalidate>
+        <div>
+          <label for="name" class="block text-gray-700 font-semibold mb-2">Your Name</label>
+          <input
+            type="text" id="name" name="name" placeholder="Enter your full name" required
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+        </div>
+
+        <div>
+          <label for="email" class="block text-gray-700 font-semibold mb-2">Your Email</label>
+          <input
+            type="email" id="email" name="email" placeholder="Enter your email address" required
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+        </div>
+
+        <div>
+          <label for="message" class="block text-gray-700 font-semibold mb-2">Your Message</label>
+          <textarea
+            id="message" name="message" rows="6" placeholder="Write your message here..." required
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base"></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-green-600 text-white font-semibold py-2.5 sm:py-3 rounded hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-1 text-sm sm:text-base">
+          Send Message
+        </button>
+      </form>
+
+      <!-- Contact Details -->
+      <div class="mt-10 sm:mt-14 border-t pt-6 sm:pt-8 text-gray-700 space-y-3 sm:space-y-4 text-sm sm:text-base">
+        <p>
+          <strong class="font-semibold">Email:</strong>
+          <a href="mailto:support@sabjiwala.com" class="text-green-700 hover:text-yellow-500 underline">support@sabjiwala.com</a>
+        </p>
+        <p>
+          <strong class="font-semibold">Phone:</strong>
+          <a href="tel:+919876543210" class="text-green-700 hover:text-yellow-500 underline">+91 9876543210</a>
+        </p>
+        <p>
+          <strong class="font-semibold">Address:</strong> 123 Sabjiwala Street, City, India
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <%- include('partials/footer') %>
+</body>
+</html>

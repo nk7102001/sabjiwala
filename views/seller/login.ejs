@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seller Login - Sabjiwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- ✅ Navbar -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full flex justify-center items-center px-3 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div class="bg-white shadow-lg rounded-lg p-5 sm:p-8 w-full max-w-md">
+
+      <!-- Title -->
+      <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-green-700 text-center">
+        Seller Login
+      </h2>
+
+      <!-- Error Message -->
+      <% if (typeof error !== 'undefined' && error && error.length) { %>
+        <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm sm:text-base">
+          <%= Array.isArray(error) ? error.join('<br/>') : error %>
+        </div>
+      <% } %>
+
+      <!-- Success Message -->
+      <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length) { %>
+        <div class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4 text-sm sm:text-base">
+          <%= Array.isArray(success_msg) ? success_msg.join('<br/>') : success_msg %>
+        </div>
+      <% } %>
+
+      <!-- Login Form -->
+      <form action="/seller/login" method="POST" class="space-y-4 w-full" novalidate>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          required
+          class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+          class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-600 text-sm sm:text-base" />
+
+        <button
+          type="submit"
+          class="w-full bg-green-600 text-white py-2.5 rounded hover:bg-green-700 transition font-semibold text-sm sm:text-base">
+          Login
+        </button>
+      </form>
+
+      <!-- Become a Seller Redirect -->
+      <a href="/become-seller"
+         class="block text-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4 transition text-sm sm:text-base">
+        Become a Seller
+      </a>
+
+    </div>
+  </main>
+
+  <!-- ✅ Footer -->
+  <%- include('../partials/footer') %>
+
+</body>
+</html>

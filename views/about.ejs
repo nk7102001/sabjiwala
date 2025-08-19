@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About - Sabjiwala</title>
+  <meta name="description" content="Sabjiwala brings fresh vegetables and essentials to your doorstep, empowering local farmers and vendors with fast, reliable delivery." />
+  <meta name="theme-color" content="#16a34a" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background-color: #16a34a; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-green-50 via-white to-white min-h-screen flex flex-col font-sans text-gray-800">
+
+  <!-- Navbar -->
+  <%- include('partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-16" role="main">
+    <section class="bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 sm:p-10 md:p-14 max-w-4xl mx-auto">
+      <!-- Heading -->
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-green-700 mb-6 border-b-4 border-yellow-400 inline-block pb-2">
+        About Sabjiwala
+      </h1>
+
+      <!-- Paragraphs -->
+      <p class="text-base sm:text-lg leading-relaxed mb-6">
+        Sabjiwala is dedicated to bringing the freshest vegetables, fruits, and daily essentials right to your doorstep.
+        We prioritize supporting local vendors, ensuring guaranteed quality, and providing fast, reliable delivery.
+      </p>
+
+      <p class="text-base sm:text-lg leading-relaxed mb-6">
+        Our vision is to empower local farmers and sellers by connecting them directly with customers, thereby reducing intermediaries and making fresh produce more affordable.
+      </p>
+
+      <p class="text-base sm:text-lg leading-relaxed">
+        Join us in our mission to build a sustainable marketplace that values freshness, quality, and community.
+      </p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Orders - Sabjiwala Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <%- include('../partials/navbar') %>
+
+  <!-- Main Content -->
+  <main class="flex-grow w-full px-3 sm:px-6 lg:px-8 py-6 sm:py-10" role="main">
+    
+    <!-- Page Title -->
+    <h1 class="text-2xl sm:text-3xl font-extrabold mb-6 text-green-700">
+      All Orders
+    </h1>
+
+    <!-- Filter Form -->
+    <% const _query = typeof query === 'object' && query ? query : {}; %>
+    <% const _sellers = Array.isArray(sellers) ? sellers : []; %>
+    <form method="GET"
+          class="bg-white shadow-md rounded-lg p-4 sm:p-5 mb-6 flex flex-col sm:flex-wrap sm:flex-row gap-4 sm:items-center">
+      
+      <select name="status" class="border rounded px-3 py-2 w-full sm:w-auto">
+        <% const statuses = ['All','Pending','Processing','Shipped','Delivered','Cancelled']; %>
+        <% statuses.forEach((st) => { %>
+          <option value="<%= st %>" <%= (_query.status === st) ? 'selected' : '' %>><%= st %></option>
+        <% }) %>
+      </select>
+
+      <select name="seller" class="border rounded px-3 py-2 w-full sm:w-auto">
+        <option value="">All</option>
+        <% _sellers.forEach((s) => { %>
+          <option value="<%= s._id %>" <%= (_query.seller == s._id) ? 'selected' : '' %>><%= s.shopName || s.name %></option>
+        <% }) %>
+      </select>
+
+      <input type="text" name="customer" placeholder="Search by customer"
+             value="<%= _query.customer || '' %>"
+             class="border rounded px-3 py-2 w-full sm:w-auto flex-1" />
+
+      <input type="date" name="startDate" value="<%= _query.startDate || '' %>"
+             class="border rounded px-3 py-2 w-full sm:w-auto" />
+
+      <input type="date" name="endDate" value="<%= _query.endDate || '' %>"
+             class="border rounded px-3 py-2 w-full sm:w-auto" />
+
+      <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+        Filter
+      </button>
+    </form>
+
+    <!-- Orders Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+      <% const _orders = Array.isArray(orders) ? orders : []; %>
+      <table class="w-full border-collapse text-left min-w-[800px]">
+        <thead class="bg-green-200 text-gray-900">
+          <tr>
+            <th class="px-4 py-2 border">Order ID</th>
+            <th class="px-4 py-2 border">Customer</th>
+            <th class="px-4 py-2 border">Items</th>
+            <th class="px-4 py-2 border">Total</th>
+            <th class="px-4 py-2 border">Status</th>
+            <th class="px-4 py-2 border">Date</th>
+            <th class="px-4 py-2 border">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (_orders.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center py-4 text-gray-500">
+                No orders found
+              </td>
+            </tr>
+          <% } else { %>
+            <% _orders.forEach((order) => { %>
+              <tr class="border-b hover:bg-green-50">
+                <td class="px-4 py-2 text-sm sm:text-base"><%= order._id %></td>
+                <td class="px-4 py-2 text-sm sm:text-base">
+                  <%= (order.guestInfo && order.guestInfo.name) || (order.user && order.user.name) || 'Guest' %>
+                </td>
+                <td class="px-4 py-2 text-sm sm:text-base">
+                  <% const items = Array.isArray(order.items) ? order.items : []; %>
+                  <% if (items.length === 0) { %>
+                    <span class="text-gray-500">—</span>
+                  <% } else { %>
+                    <ul class="list-disc list-inside space-y-1">
+                      <% items.forEach((it) => { %>
+                        <li><%= it.name %> (<%= it.qty %> kg) - ₹<%= it.subtotal %></li>
+                      <% }) %>
+                    </ul>
+                  <% } %>
+                </td>
+                <td class="px-4 py-2 font-bold text-sm sm:text-base">₹<%= Number(order.total || 0) %></td>
+                <td class="px-4 py-2 text-sm sm:text-base"><%= order.status || '' %></td>
+                <td class="px-4 py-2 text-sm sm:text-base"><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '' %></td>
+                <td class="px-4 py-2">
+                  <form method="POST" action="/admin/orders/<%= order._id %>/status"
+                        class="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                    <select name="status" class="border rounded px-2 py-1 text-sm">
+                      <% ['Pending','Processing','Shipped','Delivered','Cancelled'].forEach((st) => { %>
+                        <option value="<%= st %>" <%= (order.status === st) ? 'selected' : '' %>><%= st %></option>
+                      <% }) %>
+                    </select>
+                    <button class="bg-blue-600 text-white px-2 py-1 rounded text-sm hover:bg-blue-700 transition">
+                      Update
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <%- include('../partials/footer') %>
+
+</body>
+</html>
