@@ -1,4 +1,3 @@
-// auth/passport.js
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
@@ -8,11 +7,11 @@ const DeliveryGuy = require('../models/DeliveryGuy');
 
 // Small helpers to safely read Google profile data
 function getGoogleEmail(profile) {
-  const v = Array.isArray(profile?.emails) && profile.emails[0]?.value ? profile.emails.value : '';
+  const v = Array.isArray(profile?.emails) && profile.emails[0]?.value ? profile.emails[0].value : '';
   return v ? String(v).toLowerCase() : '';
 }
 function getGooglePhoto(profile) {
-  return Array.isArray(profile?.photos) && profile.photos?.value ? profile.photos.value : '';
+  return Array.isArray(profile?.photos) && profile.photos[0]?.value ? profile.photos[0].value : '';
 }
 
 // === Existing User LocalStrategy ===

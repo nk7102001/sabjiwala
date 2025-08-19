@@ -1,5 +1,5 @@
 if (process.env.NODE_ENV !== 'production') {
-require('dotenv').config();
+  require('dotenv').config();
 }
 const express = require('express');
 const mongoose = require('mongoose');
@@ -120,10 +120,10 @@ const paymentWebhook = require('./routes/paymentWebhook');
 const deliveryRoutes = require('./routes/deliveryRoutes');
 
 // --- Use Routes ---
-app.use('/', userRoutes);            // Signup, Login, etc.
-app.use('/', googleAuthRoutes);      // Google OAuth routes
-app.use('/', productRoutes);         // Product/sabji routes
-app.use('/orders', orderRoutes);     // Protected order routes
+app.use('/', userRoutes);             // Signup, Login, etc.
+app.use('/', googleAuthRoutes);       // Google OAuth routes
+app.use('/', productRoutes);           // Product/sabji routes
+app.use('/orders', orderRoutes);       // Protected order routes
 app.use('/', couponRoutes);
 app.use('/', helpRoutes);
 app.use('/', addressRoutes);

@@ -1,23 +1,30 @@
-// routes/authRoutes.js
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
-// User Google OAuth Init
-router.get(
-  '/auth/google',
-  passport.authenticate('user-google', { scope: ['profile', 'email'] })
-);
+// User Google OAuth Init with role saved in session
+router.get('/auth/google', (req, res, next) => {
+  // Role is 'user' by default; for delivery login pass ?role=delivery
+  const role = req.query.role === 'delivery' ? 'delivery' : 'user';
+  req.session.oauthRole = role; // Save role in session to use after callback
+  const strategy = role === 'delivery' ? 'delivery-google' : 'user-google';
+  passport.authenticate(strategy, { scope: ['profile', 'email'] })(req, res, next);
+});
 
-// User Google OAuth Callback
+// Google OAuth Callback for both user and delivery
 router.get(
   '/auth/google/callback',
-  passport.authenticate('user-google', {
-    failureRedirect: '/login',
-    // failureFlash: true, // uncomment if using connect-flash and want error messaging
-  }),
+  (req, res, next) => {
+    const strategy = req.session.oauthRole === 'delivery' ? 'delivery-google' : 'user-google';
+    passport.authenticate(strategy, {
+      failureRedirect: req.session.oauthRole === 'delivery' ? '/delivery/login' : '/login',
+      // failureFlash: true, // uncomment if using connect-flash
+    })(req, res, next);
+  },
   (req, res) => {
-    // Successful authentication, redirect home (or to previous intended URL if you store it)
+    // Redirect based on role after successful authentication
+    const role = req.session.oauthRole || 'user';
+    if (role === 'delivery') return res.redirect('/delivery/dashboard');
     return res.redirect('/');
   }
 );
