@@ -5,6 +5,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const path = require('path');
 const passport = require('./auth/passport');
+const MongoStore = require('connect-mongo');
 
 const app = express();
 
@@ -26,6 +27,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // --- Express Configurations ---
 app.set('view engine', 'ejs');
+app.set('trust proxy', 1);
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -33,10 +35,20 @@ app.use(express.urlencoded({ extended: false }));
 
 // --- Session Middleware (only once) ---
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'yoursecretkey',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    collectionName: 'sessions',
+    ttl: 60 * 60 * 24 * 7 // 7 days
+  }),
+  cookie: {
+    maxAge: 1000*60*60*24*7, // 7 days
+    secure: true,            // Render HTTPS pe hai
+    httpOnly: true,
+    sameSite: 'lax'
+  }
 }));
 
 // --- Passport Middlewares ---
