@@ -1,9 +1,9 @@
 <nav class="bg-white shadow-md sticky top-0 z-50"
      x-data="{ mobileMenuOpen: false }"
+     x-init="$watch('mobileMenuOpen', v => { document.body.style.overflow = v ? 'hidden' : '' })"
      @keydown.escape.stop="mobileMenuOpen = false">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16 items-center">
-
       <!-- Logo -->
       <div class="flex-shrink-0 flex items-center">
         <a href="/" class="flex items-center space-x-1 select-none" @click.stop>
@@ -103,28 +103,31 @@
       <!-- Burger (mobile) -->
       <div class="md:hidden flex items-center">
         <button
+          type="button"
           @click.stop="mobileMenuOpen = !mobileMenuOpen"
           aria-label="Toggle menu"
           class="focus:outline-none focus:ring-2 focus:ring-green-600 rounded-md p-1 hover:bg-green-100">
           <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
-            <path :class="{'hidden': mobileMenuOpen, 'inline-flex': !mobileMenuOpen }" class="inline-flex" d="M4 6h16M4 12h16M4 18h16"/>
-            <path :class="{'hidden': !mobileMenuOpen, 'inline-flex': mobileMenuOpen }" class="hidden" d="M6 18L18 6M6 6l12 12"/>
+            <path :class="{'hidden': mobileMenuOpen, 'inline-flex': !mobileMenuOpen}" class="inline-flex" d="M4 6h16M4 12h16M4 18h16"/>
+            <path :class="{'hidden': !mobileMenuOpen, 'inline-flex': mobileMenuOpen}" class="hidden" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Mobile menu panel -->
+  <!-- Mobile menu panel (overlay, not fullscreen; same content height as before) -->
+  <!-- top-16 aligns the panel just below the 64px (h-16) navbar. Adjust if your nav height differs -->
   <div
     x-show="mobileMenuOpen"
     x-transition
-    class="md:hidden bg-white border-t border-gray-200 shadow-lg overflow-y-auto max-h-[calc(100vh-4rem)]"
+    class="fixed top-16 left-0 right-0 z-50 bg-white md:hidden border-t border-gray-200 shadow-lg overflow-y-auto"
     style="display:none"
     @click.outside="mobileMenuOpen = false"
     @pointerdown.stop>
     <div class="flex flex-col py-6 px-4 space-y-2 text-lg font-medium">
       <a href="/" class="py-2 px-2 rounded hover:bg-green-50 hover:text-green-600" @click="mobileMenuOpen=false">Home</a>
+
       <div x-data="{ openCat: false }" @pointerdown.stop>
         <button
           @click="openCat = !openCat"
