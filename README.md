@@ -9,6 +9,28 @@ real-world e-commerce system.
 
 ---
 
+## 📸 Screenshots
+
+### Home Page
+![Home](screenshots/home.png)
+
+### Product Listing
+![Products](screenshots/product.png)
+
+### Cart
+![Cart](screenshots/cart.png)
+
+### Signup
+![Signup](screenshots/signup.png)
+
+### Checkout
+![Checkout](screenshots/checkout.png)
+
+### Razorpay Payment
+![Razorpay](screenshots/rzorpay.png)
+
+---
+
 ## 🚀 Features
 
 - Multi-role authentication (Customer, Vendor, Admin, Delivery Partner)
@@ -86,4 +108,5 @@ server.js
 - Designing role-based dashboards and access control
 - Managing complex application workflows
 - Deploying full-stack applications on cloud platforms
+
 
