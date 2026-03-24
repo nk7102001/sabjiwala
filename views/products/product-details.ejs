@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title><%= (product && product.name) ? product.name : 'Product' %> — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('../partials/navbar') %>
+
+  <main class="sw-main max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <!-- Product Detail Card -->
+    <div class="sw-card overflow-hidden mb-10 anim-fade-up">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <!-- Image -->
+        <div class="relative overflow-hidden bg-green-50 min-h-64">
+          <img src="<%= product && product.imageUrl ? product.imageUrl : '' %>"
+               alt="<%= product && product.name ? product.name : 'Product' %>"
+               class="w-full h-72 md:h-full object-cover cursor-zoom-in hover:scale-105 transition-transform duration-500"
+               id="mainImage" />
+          <% if (product && product.inStock === false) { %>
+            <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <span class="sw-badge sw-badge-red text-base px-5 py-2">Out of Stock</span>
+            </div>
+          <% } %>
+        </div>
+        <!-- Info -->
+        <div class="p-8 flex flex-col justify-center">
+          <span class="sw-badge sw-badge-green mb-3"><%= product && product.category ? product.category : '' %></span>
+          <h1 class="sw-heading text-3xl sm:text-4xl mb-3"><%= product && product.name ? product.name : 'Product' %></h1>
+          <p class="text-gray-600 leading-relaxed mb-6"><%= product && product.description ? product.description : 'Fresh and quality product.' %></p>
+          <div class="flex flex-wrap gap-4">
+            <div class="bg-green-50 rounded-xl px-5 py-3 text-center">
+              <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Category</p>
+              <p class="font-bold text-green-700 text-sm mt-0.5"><%= product && product.category ? product.category : 'N/A' %></p>
+            </div>
+            <div class="bg-green-50 rounded-xl px-5 py-3 text-center">
+              <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Availability</p>
+              <p class="font-bold text-sm mt-0.5 <%= product && product.inStock===false ? 'text-red-600' : 'text-green-600' %>">
+                <%= product && product.inStock===false ? '❌ Out of Stock' : '✅ Available' %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vendors -->
+    <section class="mb-12 anim-fade-up delay-150">
+      <h2 class="sw-heading text-xl sm:text-2xl mb-5">Available Vendors</h2>
+      <% const _vendors = Array.isArray(vendors) ? vendors : []; %>
+      <% if (_vendors.length === 0) { %>
+        <div class="sw-card p-8 text-center">
+          <p class="text-gray-400">No vendors currently selling this product.</p>
+        </div>
+      <% } else { %>
+        <div class="space-y-4">
+          <% _vendors.forEach((vendor, i) => {
+              const vp = (vendor && Array.isArray(vendor.products))
+                ? vendor.products.find(p => p.product && product && p.product.toString() === product._id.toString())
+                : null;
+          %>
+            <div class="sw-card p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 anim-fade-up" style="animation-delay:<%=i*0.07%>s">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-2xl flex-shrink-0">🏪</div>
+                <div>
+                  <p class="font-bold text-green-700 text-base" style="font-family:'Syne',sans-serif"><%= vendor.shopName || vendor.name || 'Vendor' %></p>
+                  <% if (vp) { %>
+                    <p class="text-sm text-gray-500">₹<%= Number(vp.price||0) %>/kg · <%= Number(vp.availableQty||0) %> kg available</p>
+                  <% } %>
+                </div>
+              </div>
+              <% if (vp && Number(vp.availableQty||0) > 0) { %>
+                <form action="/cart/add-from-vendor" method="POST" class="flex-shrink-0">
+                  <input type="hidden" name="productId" value="<%= product && product._id ? product._id : '' %>" />
+                  <input type="hidden" name="vendorId" value="<%= vendor && vendor._id ? vendor._id : '' %>" />
+                  <button class="sw-btn sw-btn-primary px-5 py-2 text-sm">Add to Cart 🛒</button>
+                </form>
+              <% } else { %>
+                <span class="sw-badge sw-badge-red px-4 py-1.5">Out of Stock</span>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+
+    <!-- Reviews -->
+    <section id="reviews" class="mb-16 anim-fade-up delay-300">
+      <h2 class="sw-heading text-xl sm:text-2xl mb-5">Customer Reviews</h2>
+      <% const _reviews = Array.isArray(reviews) ? reviews : []; %>
+      <% if (_reviews.length > 0) { %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <% _reviews.forEach((r, i) => { %>
+            <div class="sw-card p-5 anim-fade-up" style="animation-delay:<%=i*0.06%>s">
+              <div class="flex items-start justify-between mb-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center font-bold text-green-700 text-sm">
+                    <%= r.name ? r.name[0].toUpperCase() : 'C' %>
+                  </div>
+                  <p class="font-semibold text-gray-800 text-sm"><%= r.name || 'Customer' %></p>
+                </div>
+                <span class="sw-stars text-sm"><% for(let s=0;s<Number(r.rating||0);s++){%>⭐<%}%></span>
+              </div>
+              <p class="text-gray-600 text-sm leading-relaxed"><%= r.review || '' %></p>
+              <p class="text-xs text-gray-400 mt-2"><%= r.createdAt ? new Date(r.createdAt).toDateString() : '' %></p>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="text-gray-400 mb-6 text-sm">No reviews yet. Be the first to review!</p>
+      <% } %>
+
+      <!-- Add Review Form -->
+      <div class="sw-card p-6 max-w-2xl">
+        <h3 class="font-bold text-gray-800 mb-4" style="font-family:'Syne',sans-serif">Write a Review</h3>
+        <form action="/product/<%= product && product._id ? product._id : '' %>/reviews" method="POST" class="space-y-4">
+          <input type="hidden" name="productSlug" value="<%= product && product.slug ? product.slug : '' %>" />
+          <div>
+            <label class="sw-label">Your Name</label>
+            <input type="text" name="name" placeholder="Rahul Sharma" required class="sw-input" />
+          </div>
+          <div>
+            <label class="sw-label">Rating</label>
+            <select name="rating" required class="sw-input">
+              <option value="">Select rating</option>
+              <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+              <option value="4">⭐⭐⭐⭐ Good</option>
+              <option value="3">⭐⭐⭐ Average</option>
+              <option value="2">⭐⭐ Below Average</option>
+              <option value="1">⭐ Poor</option>
+            </select>
+          </div>
+          <div>
+            <label class="sw-label">Review</label>
+            <textarea name="review" rows="3" placeholder="Share your experience..." required class="sw-input"></textarea>
+          </div>
+          <button type="submit" class="sw-btn sw-btn-primary px-6 py-2.5">Submit Review ✨</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <script>
+    const img = document.getElementById("mainImage");
+    if (img) img.addEventListener("click", () => img.classList.toggle("scale-110"));
+  </script>
+</body>
+</html>

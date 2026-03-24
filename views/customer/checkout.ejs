@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Checkout — Sabjiwala</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="sw-page">
+  <%- include('../partials/navbar') %>
+  <main class="sw-main max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <div class="flex items-center gap-3 mb-8 anim-fade-up">
+      <span class="text-3xl">💳</span>
+      <h1 class="sw-heading text-2xl sm:text-3xl">Checkout</h1>
+    </div>
+
+    <% if (!customer) { %>
+      <div class="sw-alert sw-alert-error mb-6 anim-fade-up">
+        ⚠️ Please <a href="/login" class="font-bold underline">login</a> to place your order.
+      </div>
+    <% } %>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <!-- Order Summary -->
+      <div class="lg:col-span-2 anim-fade-up delay-100">
+        <div class="sw-card p-6 sticky top-24">
+          <h2 class="font-bold text-gray-800 mb-4" style="font-family:'Syne',sans-serif">🧾 Order Summary</h2>
+          <% const _cart = Array.isArray(cart) ? cart : []; %>
+          <% if (_cart.length === 0) { %>
+            <p class="text-gray-400 text-sm">Your cart is empty.</p>
+          <% } else { %>
+            <div class="space-y-3 mb-4">
+              <% _cart.forEach(item => { %>
+                <div class="flex justify-between items-start gap-2 text-sm py-2 border-b border-green-50">
+                  <div>
+                    <p class="font-semibold text-gray-800"><%= item.name %></p>
+                    <p class="text-xs text-gray-400"><%= item.vendorName||'' %> · <%= Number(item.qty||0) %> kg</p>
+                  </div>
+                  <span class="font-bold text-green-700 flex-shrink-0">₹<%= Number(item.subtotal||(Number(item.price||0)*Number(item.qty||0))) %></span>
+                </div>
+              <% }) %>
+            </div>
+            <div class="flex justify-between items-center pt-2">
+              <span class="font-semibold text-gray-700">Total</span>
+              <span class="font-black text-2xl text-green-700" style="font-family:'Syne',sans-serif">₹<%= Number(total||0) %></span>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="lg:col-span-3 anim-fade-up delay-200">
+        <div class="sw-card p-6 sm:p-8">
+          <h2 class="font-bold text-gray-800 mb-6" style="font-family:'Syne',sans-serif">📍 Delivery Details</h2>
+          <form method="POST" action="/checkout" id="checkoutForm" class="space-y-4" <%= !customer ? 'onsubmit="return false;"' : '' %>>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="sw-label">Full Name</label>
+                <input name="name" placeholder="Rahul Sharma" required class="sw-input"
+                  value="<%= customer ? (customer.name||'') : '' %>" />
+              </div>
+              <div>
+                <label class="sw-label">Phone Number</label>
+                <input name="phone" placeholder="9876543210" required class="sw-input"
+                  value="<%= customer ? (customer.mobile||customer.phone||'') : '' %>" />
+              </div>
+            </div>
+            <div>
+              <label class="sw-label">Email (Optional)</label>
+              <input name="email" type="email" placeholder="you@example.com" class="sw-input"
+                value="<%= customer ? (customer.email||'') : '' %>" />
+            </div>
+            <div>
+              <label class="sw-label">Street Address</label>
+              <input name="address" placeholder="123, Main Street" required class="sw-input" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="sw-label">City</label>
+                <input name="city" placeholder="Mumbai" required class="sw-input" />
+              </div>
+              <div>
+                <label class="sw-label">Pincode</label>
+                <input name="pincode" placeholder="400001" required class="sw-input" />
+              </div>
+            </div>
+            <div>
+              <label class="sw-label">Payment Method</label>
+              <select name="paymentMethod" id="paymentMethod" required class="sw-input">
+                <option value="COD">💵 Cash on Delivery</option>
+                <option value="Online">💳 Online Payment (Razorpay)</option>
+              </select>
+            </div>
+            <input type="hidden" name="paymentStatus" value="Unpaid" id="paymentStatusInput" />
+            <button type="submit" class="sw-btn sw-btn-primary w-full py-3.5 text-base mt-2" <%= !customer ? 'disabled' : '' %>>
+              🚀 Place Order
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+  <% if (customer) { %>
+  <script>
+    document.getElementById("checkoutForm").addEventListener("submit", async function(e) {
+      const method = document.getElementById("paymentMethod").value;
+      if (method === "Online") {
+        e.preventDefault();
+        const amount = Number("<%= Number(total||0) %>");
+        if (!amount || amount < 1) { alert("Invalid order amount!"); return; }
+        let orderData;
+        try {
+          const res = await fetch("/create-order", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ amount }) });
+          orderData = await res.json();
+        } catch { alert("Failed to create order."); return; }
+        if (!orderData?.id) { alert("Razorpay order creation failed!"); return; }
+        const rzp = new Razorpay({
+          key: "<%= razorpayKey %>", amount: orderData.amount, currency:"INR",
+          name:"Sabjiwala", description:"Vegetable Order", order_id: orderData.id,
+          handler: function(response) {
+            document.getElementById("paymentStatusInput").value = "Paid";
+            document.getElementById("checkoutForm").submit();
+          },
+          theme: { color:"#16a34a" }
+        });
+        rzp.open();
+      }
+    });
+  </script>
+  <% } %>
+</body>
+</html>

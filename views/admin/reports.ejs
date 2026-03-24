@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Reports & Analytics — Admin</title>
+</head>
+<body class="sw-page" style="background:#f0fdf4">
+  <nav class="bg-gray-900 text-white px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+    <a href="/admin/dashboard" style="font-family:'Syne',sans-serif;font-weight:800" class="text-lg">Sabjiwala <span class="text-green-400">Admin</span></a>
+    <div class="flex gap-2">
+      <a href="/admin/dashboard" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">🏠 Dashboard</a>
+      <a href="/admin/sellers" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">🛒 Sellers</a>
+      <a href="/admin/orders" class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">📦 Orders</a>
+    </div>
+  </nav>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center gap-3 mb-8 anim-fade-up">
+      <span class="text-3xl">📊</span>
+      <h1 class="sw-heading text-2xl">Reports & Analytics</h1>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-5 mb-10">
+      <% [
+        ['💰','Total Revenue','₹'+(typeof totalRevenue!=='undefined'?totalRevenue:0),'text-green-700'],
+        ['📦','Total Orders',typeof totalOrders!=='undefined'?totalOrders:0,'text-blue-700'],
+        ['🏪','Active Sellers',typeof activeSellers!=='undefined'?activeSellers:0,'text-purple-700'],
+        ['👥','Total Users',typeof totalUsers!=='undefined'?totalUsers:0,'text-orange-700'],
+      ].forEach(([ico,label,val,cls], i) => { %>
+        <div class="sw-card p-5 anim-fade-up" style="animation-delay:<%=i*0.08%>s">
+          <p class="text-gray-500 text-xs font-semibold mb-2"><%= ico %> <%= label %></p>
+          <p class="text-2xl font-black <%= cls %>" style="font-family:'Syne',sans-serif"><%= val %></p>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Monthly sales table if available -->
+    <% if (typeof monthlySales !== 'undefined' && Array.isArray(monthlySales) && monthlySales.length > 0) { %>
+      <div class="sw-card overflow-hidden anim-fade-up delay-300">
+        <div class="px-6 py-4 border-b border-green-50">
+          <h2 class="font-bold text-gray-800" style="font-family:'Syne',sans-serif">📅 Monthly Sales</h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="sw-table">
+            <thead><tr><th>Month</th><th>Orders</th><th>Revenue</th></tr></thead>
+            <tbody>
+              <% monthlySales.forEach(row => { %>
+                <tr>
+                  <td class="font-semibold"><%= row.month||row._id||'' %></td>
+                  <td><%= row.orders||row.count||0 %></td>
+                  <td class="font-bold text-green-700">₹<%= Number(row.revenue||row.total||0) %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="sw-card p-10 text-center anim-fade-up delay-300">
+        <div class="text-5xl mb-3">📈</div>
+        <p class="text-gray-400">Detailed analytics will appear here as orders come in.</p>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

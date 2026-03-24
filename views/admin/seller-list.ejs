@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Seller List — Admin</title>
+</head>
+<body class="sw-page" style="background:#f0fdf4">
+  <nav class="bg-gray-900 text-white px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+    <a href="/admin/dashboard" style="font-family:'Syne',sans-serif;font-weight:800" class="text-lg">Sabjiwala <span class="text-green-400">Admin</span></a>
+    <a href="/admin/dashboard" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">← Dashboard</a>
+  </nav>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="sw-heading text-2xl mb-6 anim-fade-up">Seller List</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <% const _sellers = Array.isArray(sellers) ? sellers : []; %>
+      <% _sellers.forEach((s, i) => { %>
+        <div class="sw-card p-5 anim-fade-up" style="animation-delay:<%=i*0.06%>s">
+          <div class="flex items-center gap-3 mb-3">
+            <% if (s.shopPhoto) { %>
+              <img src="<%= s.shopPhoto %>" class="w-12 h-12 rounded-xl object-cover" />
+            <% } else { %>
+              <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-2xl">🏪</div>
+            <% } %>
+            <div>
+              <p class="font-bold text-gray-800 text-sm" style="font-family:'Syne',sans-serif"><%= s.shopName||'' %></p>
+              <p class="text-xs text-gray-500"><%= s.name||'' %></p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="sw-badge <%=s.status==='Approved'?'sw-badge-green':s.status==='Rejected'?'sw-badge-red':'sw-badge-yellow'%>"><%= s.status||'Pending' %></span>
+            <a href="/admin/seller/<%= s._id %>" class="sw-btn sw-btn-outline px-3 py-1.5 text-xs">View →</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Seller Dashboard — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('../partials/navbar') %>
+  <main class="sw-main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+
+    <!-- Welcome Banner -->
+    <div class="relative overflow-hidden rounded-2xl mb-10 anim-fade-up"
+         style="background: linear-gradient(135deg,#16a34a 0%,#15803d 60%,#166534 100%)">
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-white"></div>
+        <div class="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-white"></div>
+      </div>
+      <div class="relative p-8 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <p class="text-green-300 text-sm font-semibold mb-1">Seller Dashboard</p>
+          <h1 class="text-3xl sm:text-4xl font-black text-white mb-1" style="font-family:'Syne',sans-serif">
+            Welcome, <%= (seller && seller.name) ? seller.name : 'Seller' %>! 👋
+          </h1>
+          <p class="text-green-200 text-sm">Manage your store, track performance, and grow 🚀</p>
+        </div>
+        <a href="/seller-logout" class="sw-btn bg-white/20 text-white border border-white/30 hover:bg-white/30 px-5 py-2.5 text-sm flex-shrink-0">🚪 Logout</a>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
+      <% [
+        ['/seller/products/add','➕','Add Product','List new products','from-green-500 to-green-600'],
+        ['/seller/products','📦','My Products','View & edit listings','from-blue-500 to-blue-600'],
+        ['/seller/analytics','📊','Analytics','Sales & performance','from-purple-500 to-purple-600'],
+      ].forEach(([href,ico,title,desc,grad], i) => { %>
+        <a href="<%= href %>" class="group relative overflow-hidden rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 anim-fade-up" style="background:linear-gradient(135deg,var(--tw-gradient-stops));animation-delay:<%=i*0.1%>s;--tw-gradient-from:<%=grad.split(' ')[0].replace('from-','')%>;background:linear-gradient(135deg,<%=grad.includes('green')?'#16a34a,#15803d':grad.includes('blue')?'#3b82f6,#2563eb':'#a855f7,#9333ea'%>)">
+          <div class="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300 block"><%= ico %></div>
+          <h3 class="font-bold text-lg mb-1" style="font-family:'Syne',sans-serif"><%= title %></h3>
+          <p class="text-white/70 text-sm"><%= desc %></p>
+        </a>
+      <% }) %>
+    </div>
+
+    <!-- Active Orders -->
+    <div class="sw-card overflow-hidden anim-fade-up delay-300">
+      <div class="px-6 py-4 border-b border-green-50 flex items-center justify-between">
+        <h2 class="font-bold text-gray-800 text-lg" style="font-family:'Syne',sans-serif">📋 Active Orders</h2>
+        <span class="sw-badge sw-badge-green"><%= (Array.isArray(orders) ? orders : []).length %> orders</span>
+      </div>
+
+      <% const _orders = Array.isArray(orders) ? orders : []; %>
+      <% if (_orders.length === 0) { %>
+        <div class="p-12 text-center">
+          <div class="text-5xl mb-3">📭</div>
+          <p class="text-gray-400">No active orders yet.</p>
+        </div>
+      <% } else { %>
+        <div class="divide-y divide-green-50">
+          <% _orders.forEach(order => { %>
+            <div class="p-5 hover:bg-green-50/50 transition-colors">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                <div>
+                  <span class="font-mono text-xs text-gray-400">Order #</span>
+                  <span class="font-bold text-gray-800 text-sm ml-1"><%= order._id %></span>
+                  <span class="sw-badge ml-2 <%= order.status==='Packed'?'sw-badge-green':order.status==='Cancelled'?'sw-badge-red':'sw-badge-yellow' %>"><%= order.status %></span>
+                </div>
+                <% if (order.status === 'Pending' || order.status === 'Processing') { %>
+                  <form method="POST" action="/vendor/order/<%= order._id %>/packed">
+                    <button type="submit" class="sw-btn sw-btn-primary px-4 py-2 text-sm">✅ Mark as Packed</button>
+                  </form>
+                <% } else { %>
+                  <span class="sw-badge sw-badge-green">📦 Packed</span>
+                <% } %>
+              </div>
+              <% const _items = Array.isArray(order.items) ? order.items : []; %>
+              <% if (_items.length > 0) { %>
+                <div class="bg-green-50 rounded-xl p-3">
+                  <p class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Items to pack:</p>
+                  <div class="flex flex-wrap gap-2">
+                    <% _items.forEach(item => { %>
+                      <span class="text-xs bg-white border border-green-200 text-gray-700 px-2.5 py-1 rounded-lg font-medium">
+                        <%= item.name %> — <%= item.qty %> kg · ₹<%= item.price %>
+                      </span>
+                    <% }) %>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+</body>
+</html>

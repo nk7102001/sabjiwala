@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Edit Product — Sabjiwala Seller</title>
+</head>
+<body class="sw-page">
+  <%- include('../partials/navbar') %>
+  <main class="sw-main max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <div class="flex items-center gap-3 mb-8 anim-fade-up">
+      <span class="text-3xl">✏️</span>
+      <h1 class="sw-heading text-2xl sm:text-3xl">Edit Product</h1>
+    </div>
+
+    <div class="sw-card p-6 sm:p-8 anim-fade-up delay-100">
+      <form action="/seller/products/edit/<%= product && product._id ? product._id : '' %>" method="POST" enctype="multipart/form-data" class="space-y-5" novalidate>
+        <div>
+          <label class="sw-label">Product Name</label>
+          <input type="text" name="name" required class="sw-input"
+            value="<%= product && product.name ? product.name : '' %>" />
+        </div>
+        <div>
+          <label class="sw-label">Description</label>
+          <textarea name="description" rows="3" class="sw-input resize-none"><%= product && product.description ? product.description : '' %></textarea>
+        </div>
+        <div>
+          <label class="sw-label">Category</label>
+          <input type="text" name="category" required class="sw-input"
+            value="<%= product && product.category ? product.category : '' %>" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="sw-label">Price Per Kg (₹)</label>
+            <input type="number" name="pricePerKg" step="0.01" min="0" required class="sw-input"
+              value="<%= product && product.pricePerKg != null ? product.pricePerKg : '' %>" />
+          </div>
+          <div>
+            <label class="sw-label">Available Qty (Kg)</label>
+            <input type="number" name="availableQty" step="0.1" min="0" required class="sw-input"
+              value="<%= product && product.availableQty != null ? product.availableQty : '' %>" />
+          </div>
+        </div>
+        <% if (product && product.imageUrl) { %>
+          <div class="bg-green-50 rounded-xl p-3 flex items-center gap-3">
+            <img src="<%= product.imageUrl %>" class="w-16 h-16 rounded-lg object-cover" />
+            <div>
+              <p class="text-sm font-semibold text-gray-700">Current Image</p>
+              <p class="text-xs text-gray-400">Upload new image to replace</p>
+            </div>
+          </div>
+        <% } %>
+        <div>
+          <label class="sw-label">New Product Image (Optional)</label>
+          <div class="relative border-2 border-dashed border-green-200 rounded-xl p-5 text-center hover:border-green-400 transition-colors cursor-pointer">
+            <input type="file" name="image" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+            <p class="text-sm text-gray-500">📸 Click to upload new image</p>
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="sw-btn sw-btn-primary flex-1 py-3">✅ Update Product</button>
+          <a href="/seller/products" class="sw-btn sw-btn-outline flex-1 py-3 text-center">← Back</a>
+        </div>
+      </form>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Seller Login — Sabjiwala</title>
+</head>
+<body class="sw-page" style="background: linear-gradient(135deg,#f0fdf4 0%,#dcfce7 50%,#fef9c3 100%)">
+  <%- include('../partials/navbar') %>
+  <main class="flex-1 flex items-center justify-center px-4 py-16">
+    <div class="sw-card w-full max-w-md p-8 sm:p-10 anim-scale-in">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-100 text-4xl mb-4 anim-bounce-in">🏪</div>
+        <h2 class="sw-heading text-2xl sm:text-3xl text-center">Seller Login</h2>
+        <p class="text-gray-500 text-sm mt-1">Manage your store & orders</p>
+      </div>
+
+      <% if (typeof error !== 'undefined' && error && error.length) { %>
+        <div class="sw-alert sw-alert-error mb-5">⚠️ <%= Array.isArray(error) ? error.join(' · ') : error %></div>
+      <% } %>
+      <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length) { %>
+        <div class="sw-alert sw-alert-success mb-5">✅ <%= Array.isArray(success_msg) ? success_msg.join(' · ') : success_msg %></div>
+      <% } %>
+
+      <form action="/seller/login" method="POST" class="space-y-5" novalidate>
+        <div>
+          <label class="sw-label">Email Address</label>
+          <input type="email" name="email" placeholder="seller@example.com" required autofocus class="sw-input" />
+        </div>
+        <div>
+          <label class="sw-label">Password</label>
+          <div class="relative">
+            <input type="password" name="password" id="spwd" placeholder="Your password" required class="sw-input pr-10" />
+            <button type="button" onclick="const i=document.getElementById('spwd');i.type=i.type==='password'?'text':'password';this.textContent=i.type==='password'?'👁️':'🙈'" class="absolute right-3 top-1/2 -translate-y-1/2 text-sm">👁️</button>
+          </div>
+        </div>
+        <button type="submit" class="sw-btn sw-btn-primary w-full py-3 text-base">🚀 Login to Dashboard</button>
+      </form>
+
+      <div class="mt-5 pt-5 border-t border-gray-100 text-center">
+        <a href="/become-seller" class="sw-btn sw-btn-outline w-full py-2.5 text-sm">📝 Become a Seller</a>
+      </div>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+</body>
+</html>

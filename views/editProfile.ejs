@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>Edit Profile — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('partials/navbar') %>
+  <main class="sw-main max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <div class="flex items-center gap-3 mb-8 anim-fade-up">
+      <div class="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center text-2xl">✏️</div>
+      <div>
+        <h1 class="sw-heading text-2xl sm:text-3xl">Edit Profile</h1>
+        <p class="text-gray-400 text-sm">Update your account information</p>
+      </div>
+    </div>
+
+    <div class="sw-card p-6 sm:p-8 anim-fade-up delay-100">
+      <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length) { %>
+        <div class="sw-alert sw-alert-success mb-5">✅ <%= Array.isArray(success_msg) ? success_msg.join(' · ') : success_msg %></div>
+      <% } %>
+      <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length) { %>
+        <div class="sw-alert sw-alert-error mb-5">⚠️ <%= Array.isArray(error_msg) ? error_msg.join(' · ') : error_msg %></div>
+      <% } %>
+
+      <!-- Avatar -->
+      <div class="flex items-center gap-4 mb-8 pb-6 border-b border-green-50">
+        <div class="w-16 h-16 rounded-2xl bg-green-200 flex items-center justify-center text-3xl font-black text-green-700">
+          <%= (user && user.name) ? user.name[0].toUpperCase() : '?' %>
+        </div>
+        <div>
+          <p class="font-bold text-gray-800" style="font-family:'Syne',sans-serif"><%= (user && user.name) ? user.name : 'User' %></p>
+          <p class="text-gray-400 text-sm"><%= (user && user.email) ? user.email : '' %></p>
+        </div>
+      </div>
+
+      <form action="/profile/edit" method="POST" class="space-y-5" novalidate>
+        <div>
+          <label class="sw-label" for="name">Full Name</label>
+          <input type="text" id="name" name="name" required class="sw-input"
+            value="<%= (user && user.name) ? user.name : '' %>" placeholder="Your full name" />
+        </div>
+        <div>
+          <label class="sw-label" for="email">Email Address</label>
+          <input type="email" id="email" name="email" required class="sw-input"
+            value="<%= (user && user.email) ? user.email : '' %>" placeholder="your@email.com" />
+        </div>
+        <div>
+          <label class="sw-label" for="phone">Phone Number</label>
+          <input type="text" id="phone" name="phone" class="sw-input"
+            value="<%= (user && user.phone) ? user.phone : '' %>" placeholder="9876543210" />
+        </div>
+        <div class="pt-2 flex flex-col sm:flex-row gap-3">
+          <button type="submit" class="sw-btn sw-btn-primary flex-1 py-3">✅ Update Profile</button>
+          <a href="/" class="sw-btn sw-btn-outline flex-1 py-3 text-center">← Back</a>
+        </div>
+      </form>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Order Placed! — Sabjiwala</title>
+  <style>
+    @keyframes checkDraw {
+      from { stroke-dashoffset: 200; }
+      to   { stroke-dashoffset: 0; }
+    }
+    .check-path { stroke-dasharray: 200; animation: checkDraw 1s ease 0.3s both; }
+    @keyframes ringPop {
+      0%   { transform: scale(0); opacity:0; }
+      60%  { transform: scale(1.12); opacity:1; }
+      100% { transform: scale(1); opacity:1; }
+    }
+    .ring-anim { animation: ringPop 0.6s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes confetti { 0%{transform:translateY(-100%) rotate(0);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+    .confetti-piece { position:fixed; width:10px; height:10px; border-radius:2px; animation: confetti 3s ease forwards; }
+  </style>
+</head>
+<body class="sw-page" style="background: linear-gradient(135deg,#f0fdf4 0%,#dcfce7 60%,#fef9c3 100%)">
+  <%- include('../partials/navbar') %>
+  <main class="sw-main flex items-center justify-center px-4 py-16">
+    <div class="sw-card p-10 sm:p-14 text-center max-w-md w-full anim-scale-in">
+      <!-- Success Ring -->
+      <div class="ring-anim w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6 border-4 border-green-300">
+        <svg class="w-12 h-12 sm:w-14 sm:h-14 text-green-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path class="check-path" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+
+      <h1 class="sw-heading text-2xl sm:text-3xl mb-2">Order Placed! 🎉</h1>
+      <p class="text-gray-500 text-base mb-2">
+        Thank you, <span class="font-bold text-green-700"><%= typeof name !== 'undefined' && name ? name : 'Customer' %></span>!
+      </p>
+      <p class="text-gray-400 text-sm mb-8 max-w-sm mx-auto">
+        Your order is confirmed. We'll notify you once it's packed and on its way.
+      </p>
+
+      <div class="bg-green-50 rounded-2xl p-4 mb-8 text-left">
+        <div class="flex items-center gap-2 text-sm text-green-700">
+          <span class="text-xl">📲</span>
+          <span>Track your order in <a href="/orders" class="font-bold underline">My Orders</a></span>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a href="/" class="sw-btn sw-btn-primary flex-1 py-3">Continue Shopping →</a>
+        <a href="/orders" class="sw-btn sw-btn-outline flex-1 py-3">My Orders 📦</a>
+      </div>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+  <script>
+    // Confetti burst
+    const colors = ['#16a34a','#eab308','#22c55e','#fde047','#4ade80'];
+    for (let i = 0; i < 40; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `left:${Math.random()*100}%;top:-10px;background:${colors[i%colors.length]};animation-delay:${Math.random()*2}s;animation-duration:${2+Math.random()*2}s;transform:rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 5000);
+    }
+  </script>
+</body>
+</html>

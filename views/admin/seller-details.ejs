@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Seller Details — Admin</title>
+</head>
+<body class="sw-page" style="background:#f0fdf4">
+  <nav class="bg-gray-900 text-white px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+    <a href="/admin/dashboard" style="font-family:'Syne',sans-serif;font-weight:800" class="text-lg">Sabjiwala <span class="text-green-400">Admin</span></a>
+    <a href="/admin/sellers" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">← Back to Sellers</a>
+  </nav>
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+    <h1 class="sw-heading text-2xl mb-6 anim-fade-up">Seller Details</h1>
+    <% const s = typeof seller !== 'undefined' ? seller : {}; %>
+    <div class="sw-card p-6 sm:p-8 anim-fade-up delay-100">
+      <div class="flex items-center gap-4 mb-6 pb-6 border-b border-green-50">
+        <% if (s.shopPhoto) { %>
+          <img src="<%= s.shopPhoto %>" class="w-20 h-20 rounded-2xl object-cover shadow" />
+        <% } else { %>
+          <div class="w-20 h-20 rounded-2xl bg-green-100 flex items-center justify-center text-4xl">🏪</div>
+        <% } %>
+        <div>
+          <h2 class="font-bold text-xl text-gray-800" style="font-family:'Syne',sans-serif"><%= s.shopName||'Unknown Shop' %></h2>
+          <span class="sw-badge <%=s.status==='Approved'?'sw-badge-green':s.status==='Rejected'?'sw-badge-red':'sw-badge-yellow'%> mt-1"><%= s.status||'Pending' %></span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+        <% [['Owner Name',s.name],['Email',s.email],['Phone',s.phone],['City',s.city],['State',s.state],['Business Type',s.businessType],['Address',s.address]].forEach(([k,v]) => { %>
+          <div class="bg-green-50 rounded-xl p-3">
+            <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-0.5"><%= k %></p>
+            <p class="font-semibold text-gray-700"><%= v||'—' %></p>
+          </div>
+        <% }) %>
+      </div>
+      <% if (s.status !== 'Approved') { %>
+        <div class="flex gap-3 mt-6">
+          <form action="/admin/sellers/<%= s._id %>/approve" method="POST" class="flex-1">
+            <button class="sw-btn sw-btn-primary w-full py-2.5">✅ Approve Seller</button>
+          </form>
+          <form action="/admin/sellers/<%= s._id %>/reject" method="POST" class="flex-1">
+            <button class="sw-btn sw-btn-danger w-full py-2.5">❌ Reject Seller</button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </main>
+</body>
+</html>

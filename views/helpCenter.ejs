@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>Help Centre — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('partials/navbar') %>
+  <main class="sw-main max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <div class="text-center mb-10 anim-fade-up">
+      <span class="text-5xl block mb-4">❓</span>
+      <h1 class="sw-heading text-3xl sm:text-4xl mx-auto mb-2">Help Centre</h1>
+      <p class="text-gray-500 text-base max-w-md mx-auto">Find answers to your questions or reach out to us.</p>
+    </div>
+
+    <!-- FAQs -->
+    <div class="space-y-3 mb-10">
+      <% [
+        ['How do I place an order?','Browse through our fresh vegetables and fruits, add items to your cart, proceed to checkout, and complete your payment. It\'s that simple!'],
+        ['What payment methods are accepted?','We accept credit/debit cards, net banking, UPI payments, and cash on delivery (COD).'],
+        ['How can I track my order?','Go to My Orders in your account to see real-time status and tracking details for all your orders.'],
+        ['Can I cancel my order?','Orders can be cancelled before they are packed. Contact support immediately if you need to cancel.'],
+        ['What is the delivery time?','Most orders are delivered within 2-4 hours of placement, depending on your location and vendor availability.'],
+        ['How do I become a seller?','Visit our Become a Seller page, fill in your shop details, and our team will review and approve your application.'],
+      ].forEach(([q,a], i) => { %>
+        <details class="sw-card p-5 group anim-fade-up" style="animation-delay:<%=i*0.07%>s">
+          <summary class="flex items-center justify-between cursor-pointer font-semibold text-gray-800 text-sm sm:text-base list-none">
+            <span class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-green-100 text-green-700 text-xs flex items-center justify-center font-black flex-shrink-0"><%= i+1 %></span>
+              <%= q %>
+            </span>
+            <svg class="w-5 h-5 text-gray-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </summary>
+          <p class="mt-3 ml-8 text-gray-500 text-sm leading-relaxed"><%= a %></p>
+        </details>
+      <% }) %>
+    </div>
+
+    <!-- Contact Support -->
+    <div class="sw-card p-6 sm:p-8 anim-fade-up delay-500">
+      <h2 class="font-bold text-gray-800 text-lg mb-4" style="font-family:'Syne',sans-serif">Still need help? 🤝</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <% [
+          ['📧','Email Support','support@sabjiwala.com','mailto:support@sabjiwala.com'],
+          ['📞','Phone','9876543210','tel:+919876543210'],
+          ['🕐','Hours','Mon–Sat 9AM–7PM',null],
+        ].forEach(([ico,label,val,href]) => { %>
+          <div class="bg-green-50 rounded-xl p-4 text-center">
+            <div class="text-2xl mb-2"><%= ico %></div>
+            <p class="text-xs text-gray-400 font-semibold mb-1"><%= label %></p>
+            <% if (href) { %>
+              <a href="<%= href %>" class="text-sm font-bold text-green-700 hover:underline"><%= val %></a>
+            <% } else { %>
+              <p class="text-sm font-bold text-gray-700"><%= val %></p>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>

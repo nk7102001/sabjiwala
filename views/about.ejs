@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>About Us — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('partials/navbar') %>
+  <main class="sw-main max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <!-- Hero -->
+    <div class="text-center mb-12 anim-fade-up">
+      <span class="text-5xl block mb-4">🌱</span>
+      <h1 class="sw-heading text-3xl sm:text-4xl mx-auto mb-3">About Sabjiwala</h1>
+      <p class="text-gray-500 text-base sm:text-lg max-w-xl mx-auto">Connecting local farmers and vendors with millions of customers across India.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+      <% [
+        ['🌾','Our Mission','Empower local farmers and sellers by connecting them directly with customers, reducing intermediaries.'],
+        ['🚚','Our Vision','Make fresh produce affordable and accessible to every household in India.'],
+        ['🤝','Our Values','Quality, freshness, community, and sustainability in every delivery.'],
+      ].forEach(([ico,title,desc], i) => { %>
+        <div class="sw-card p-6 text-center anim-fade-up" style="animation-delay:<%=i*0.1%>s">
+          <div class="text-4xl mb-3"><%= ico %></div>
+          <h3 class="font-bold text-gray-800 mb-2" style="font-family:'Syne',sans-serif"><%= title %></h3>
+          <p class="text-gray-500 text-sm leading-relaxed"><%= desc %></p>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="sw-card p-8 sm:p-10 anim-fade-up delay-300">
+      <h2 class="sw-heading text-2xl mb-5">Our Story</h2>
+      <div class="space-y-4 text-gray-600 leading-relaxed">
+        <p>Sabjiwala is dedicated to bringing the freshest vegetables, fruits, and daily essentials right to your doorstep. We prioritize supporting local vendors, ensuring guaranteed quality, and providing fast, reliable delivery.</p>
+        <p>Our vision is to empower local farmers and sellers by connecting them directly with customers, thereby reducing intermediaries and making fresh produce more affordable.</p>
+        <p>Join us in our mission to build a sustainable marketplace that values freshness, quality, and community. Together, we can make healthy eating accessible for everyone.</p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-green-50">
+        <% [['500+','Vendors'],['10K+','Customers'],['50+','Categories'],['99%','Fresh Rate']].forEach(([num,label]) => { %>
+          <div class="text-center">
+            <p class="font-black text-2xl text-green-700" style="font-family:'Syne',sans-serif"><%= num %></p>
+            <p class="text-xs text-gray-400 font-semibold mt-0.5"><%= label %></p>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>

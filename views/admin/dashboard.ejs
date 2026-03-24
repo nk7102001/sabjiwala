@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Admin Dashboard — Sabjiwala</title>
+</head>
+<body class="sw-page" style="background:#f0fdf4">
+  <!-- Admin Topbar -->
+  <nav class="bg-gray-900 text-white px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <span class="text-xl">🛡️</span>
+      <span style="font-family:'Syne',sans-serif;font-weight:800" class="text-lg">Sabjiwala <span class="text-green-400">Admin</span></span>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <% [
+        ['/admin/reports','📊','Reports','bg-purple-600 hover:bg-purple-700'],
+        ['/admin/sellers','🛒','Sellers','bg-blue-600 hover:bg-blue-700'],
+        ['/admin/users','👥','Users','bg-teal-600 hover:bg-teal-700'],
+        ['/admin/orders','📦','Orders','bg-orange-600 hover:bg-orange-700'],
+      ].forEach(([href,ico,label,cls]) => { %>
+        <a href="<%= href %>" class="<%= cls %> text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1"><%= ico %> <%= label %></a>
+      <% }) %>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="sw-heading text-2xl sm:text-3xl mb-8 anim-fade-up">Admin Dashboard</h1>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
+      <% [
+        ['📦','Pending Products',typeof pendingProducts!=='undefined'?pendingProducts:0,'text-orange-700','border-orange-200'],
+        ['🏪','Total Sellers',typeof sellerCount!=='undefined'?sellerCount:0,'text-blue-700','border-blue-200'],
+        ['⏳','Awaiting Approval',(Array.isArray(sellers)?sellers:[]).filter(s=>s.status!=='Approved').length,'text-yellow-700','border-yellow-200'],
+      ].forEach(([ico,label,val,textCls,borderCls], i) => { %>
+        <div class="sw-card p-6 border-l-4 <%= borderCls %> anim-fade-up" style="animation-delay:<%=i*0.1%>s">
+          <p class="text-gray-500 text-sm font-semibold mb-2"><%= ico %> <%= label %></p>
+          <p class="text-3xl font-black <%= textCls %>" style="font-family:'Syne',sans-serif"><%= val %></p>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Vendor Approval -->
+    <div class="sw-card overflow-hidden mb-8 anim-fade-up delay-300">
+      <div class="px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 flex items-center justify-between">
+        <h2 class="font-bold text-white text-base" style="font-family:'Syne',sans-serif">🏪 Vendor Approvals</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="sw-table min-w-[500px]">
+          <thead><tr><th>Name</th><th>Shop Name</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <% const _sellers = Array.isArray(sellers) ? sellers : []; %>
+            <% if (_sellers.length === 0) { %>
+              <tr><td colspan="4" class="text-center py-8 text-gray-400">No sellers found.</td></tr>
+            <% } else { %>
+              <% _sellers.forEach(seller => { %>
+                <tr>
+                  <td class="font-semibold"><%= seller.name||'' %></td>
+                  <td><%= seller.shopName||'' %></td>
+                  <td><span class="sw-badge <%= seller.status==='Approved'?'sw-badge-green':'sw-badge-yellow' %>"><%= seller.status||'Pending' %></span></td>
+                  <td>
+                    <% if (seller.status !== 'Approved') { %>
+                      <div class="flex gap-2">
+                        <form action="/admin/sellers/<%= seller._id %>/approve" method="POST">
+                          <button class="sw-btn sw-btn-primary px-3 py-1.5 text-xs">✅ Approve</button>
+                        </form>
+                        <form action="/admin/sellers/<%= seller._id %>/reject" method="POST">
+                          <button class="sw-btn sw-btn-danger px-3 py-1.5 text-xs">❌ Reject</button>
+                        </form>
+                      </div>
+                    <% } else { %>
+                      <span class="text-gray-400 text-sm">—</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="sw-card overflow-hidden anim-fade-up delay-400">
+      <div class="px-6 py-4 bg-gradient-to-r from-gray-800 to-gray-900 flex items-center justify-between">
+        <h2 class="font-bold text-white text-base" style="font-family:'Syne',sans-serif">📋 Recent Orders</h2>
+        <a href="/admin/orders" class="text-green-400 text-xs hover:text-green-300 font-semibold">View All →</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="sw-table min-w-[600px]">
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            <% const _orders = Array.isArray(orders) ? orders : []; %>
+            <% if (_orders.length === 0) { %>
+              <tr><td colspan="5" class="text-center py-8 text-gray-400">No recent orders.</td></tr>
+            <% } else { %>
+              <% _orders.forEach(order => { %>
+                <tr>
+                  <td class="font-mono text-xs text-gray-500"><%= order._id %></td>
+                  <td class="font-semibold"><%= (order.guestInfo&&order.guestInfo.name)||(order.user&&order.user.name)||'Guest' %></td>
+                  <td class="font-bold text-green-700">₹<%= Number(order.total||0) %></td>
+                  <td><span class="sw-badge <%= order.status==='Delivered'?'sw-badge-green':order.status==='Cancelled'?'sw-badge-red':'sw-badge-yellow' %>"><%= order.status||'' %></span></td>
+                  <td class="text-gray-400 text-xs"><%= order.createdAt ? new Date(order.createdAt).toLocaleDateString() : '' %></td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

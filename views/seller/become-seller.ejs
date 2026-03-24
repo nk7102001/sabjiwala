@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Become a Seller — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('../partials/navbar') %>
+
+  <!-- Hero -->
+  <section class="sw-hero-bg border-b border-green-100 py-14">
+    <div class="max-w-3xl mx-auto px-4 text-center anim-fade-up">
+      <span class="text-5xl block mb-4">🏪</span>
+      <h1 class="sw-heading text-3xl sm:text-4xl mx-auto mb-3">Become a Seller</h1>
+      <p class="text-gray-600 text-base sm:text-lg max-w-md mx-auto">
+        Join our platform, reach thousands of customers, and grow your vegetable business.
+      </p>
+      <div class="flex justify-center flex-wrap gap-4 mt-6 text-sm">
+        <% [['🚀','Free Registration'],['📦','Easy Order Management'],['💰','Daily Payouts'],['🌱','Grow Your Business']].forEach(([i,t]) => { %>
+          <span class="flex items-center gap-1.5 bg-white border border-green-100 text-green-700 px-3 py-1.5 rounded-full font-semibold shadow-sm"><%= i %> <%= t %></span>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <main class="sw-main max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="sw-alert sw-alert-error mb-6 anim-fade-up">⚠️ <%= error %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="sw-alert sw-alert-success mb-6 anim-fade-up">✅ <%= success %></div>
+    <% } %>
+
+    <div class="sw-card p-6 sm:p-8 anim-fade-up delay-100">
+      <h2 class="font-bold text-gray-800 text-lg mb-6" style="font-family:'Syne',sans-serif">📝 Registration Form</h2>
+      <form action="/become-seller" method="POST" enctype="multipart/form-data" class="space-y-5" novalidate>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="sw-label">Your Name</label>
+            <input name="name" placeholder="Ramesh Kumar" required class="sw-input" />
+          </div>
+          <div>
+            <label class="sw-label">Phone Number</label>
+            <input name="phone" placeholder="9876543210" required class="sw-input" />
+          </div>
+        </div>
+        <div>
+          <label class="sw-label">Email Address</label>
+          <input name="email" type="email" placeholder="seller@example.com" required class="sw-input" />
+        </div>
+        <div>
+          <label class="sw-label">Shop Name</label>
+          <input name="shopName" placeholder="Ramesh Vegetables" required class="sw-input" />
+        </div>
+        <div>
+          <label class="sw-label">Shop Address</label>
+          <textarea name="address" placeholder="Full shop address" required class="sw-input resize-none" rows="2"></textarea>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="sw-label">City</label>
+            <input name="city" placeholder="Mumbai" required class="sw-input" />
+          </div>
+          <div>
+            <label class="sw-label">State</label>
+            <input name="state" placeholder="Maharashtra" required class="sw-input" />
+          </div>
+        </div>
+        <div>
+          <label class="sw-label">Business Type</label>
+          <select name="businessType" required class="sw-input">
+            <option value="">Select type…</option>
+            <option>Local Vendor</option>
+            <option>Farmer</option>
+            <option>Wholesaler</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="sw-label">ID Proof</label>
+            <input type="file" name="idProof" accept="image/*" class="sw-input py-2" />
+          </div>
+          <div>
+            <label class="sw-label">Shop Photo</label>
+            <input type="file" name="shopPhoto" accept="image/*" class="sw-input py-2" />
+          </div>
+        </div>
+        <div>
+          <label class="sw-label">Create Password</label>
+          <input name="password" type="password" placeholder="Min. 6 characters" required minlength="6" class="sw-input" />
+        </div>
+        <div class="flex flex-col gap-3 pt-2">
+          <button type="submit" class="sw-btn sw-btn-primary w-full py-3 text-base">🚀 Register as Seller</button>
+          <a href="/seller/login" class="sw-btn sw-btn-outline w-full py-3 text-sm text-center">Already a Seller? Login →</a>
+        </div>
+      </form>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+</body>
+</html>

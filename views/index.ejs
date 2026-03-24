@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <%- include('partials/head') %>
+  <title>Sabjiwala — Fresh Vegetables Delivered</title>
+  <meta name="description" content="Discover local vegetable vendors. Fresh produce delivered to your doorstep." />
+</head>
+<body class="sw-page">
+  <%- include('partials/navbar') %>
+
+  <!-- Hero Banner -->
+  <section class="sw-hero-bg overflow-hidden relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-14 sm:py-20 flex flex-col md:flex-row items-center gap-10">
+      <div class="flex-1 anim-fade-up">
+        <span class="sw-badge sw-badge-green text-xs mb-4 inline-flex">🌱 100% Fresh & Local</span>
+        <h1 class="sw-heading text-4xl sm:text-5xl lg:text-6xl mb-4 leading-tight" style="font-family:'Syne',sans-serif">
+          Fresh Sabzi,<br/><span class="text-yellow-500">Ghar Pe</span> 🏠
+        </h1>
+        <p class="text-gray-600 text-base sm:text-lg max-w-md mb-8">
+          Apne neighborhood ke best vegetable vendors se direct order karein. Fresh produce, fast delivery.
+        </p>
+        <!-- Search -->
+        <div class="flex flex-col sm:flex-row gap-2 max-w-xl">
+          <input type="text" id="vendorSearch" placeholder="Vendor ka naam search karein..."
+            class="sw-input flex-1 py-3 text-base" autocomplete="off" />
+          <button type="button" class="sw-btn sw-btn-primary px-6 py-3 text-base">
+            🔍 Search
+          </button>
+        </div>
+        <!-- Feature pills -->
+        <div class="flex flex-wrap gap-2 mt-6">
+          <% [['🚚','Fast Delivery'],['⭐','Top Rated'],['💰','Best Prices'],['🥦','100% Fresh']].forEach(([ico,txt]) => { %>
+            <span class="flex items-center gap-1.5 text-xs font-semibold bg-white border border-green-100 text-green-700 px-3 py-1.5 rounded-full shadow-sm"><%= ico %> <%= txt %></span>
+          <% }) %>
+        </div>
+      </div>
+      <div class="flex-shrink-0 anim-float delay-200 hidden md:block">
+        <div class="w-56 h-56 lg:w-72 lg:h-72 rounded-3xl bg-gradient-to-br from-green-400 to-green-600 shadow-2xl flex items-center justify-center text-8xl lg:text-9xl select-none">
+          🥬
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vendors Section -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" role="main">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="sw-heading text-2xl sm:text-3xl anim-fade-up">Our Vendors</h2>
+      <span class="text-sm text-gray-500 anim-fade-in">
+        <% if (typeof sellers !== 'undefined') { %><%= sellers.length %> vendors<% } %>
+      </span>
+    </div>
+
+    <p id="noResultsMsg" class="hidden text-center text-gray-400 py-16 text-lg">
+      😕 No vendors found for your search.
+    </p>
+
+    <section id="vendorList" aria-label="Vendors List"
+      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 sm:gap-6">
+      <% sellers.forEach((vendor, i) => { %>
+        <a href="/vendor/<%= vendor._id %>"
+           class="vendor-card sw-card group block overflow-hidden anim-fade-up"
+           style="animation-delay: <%= i * 0.06 %>s"
+           data-name="<%= (vendor.shopName || '').toLowerCase() %>">
+          <div class="aspect-[4/3] relative overflow-hidden bg-green-50">
+            <% if (vendor.shopPhoto) { %>
+              <img src="<%= vendor.shopPhoto %>" alt="<%= vendor.shopName %>"
+                class="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+            <% } else { %>
+              <div class="w-full h-full flex items-center justify-center text-5xl select-none">🏪</div>
+            <% } %>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+          <div class="p-3 text-center">
+            <h3 class="text-sm sm:text-base font-bold text-gray-800 group-hover:text-green-600 transition-colors line-clamp-1" style="font-family:'Syne',sans-serif">
+              <%= vendor.shopName %>
+            </h3>
+            <% if (vendor.avgRating) { %>
+              <p class="text-yellow-500 mt-1 text-xs font-semibold">⭐ <%= vendor.avgRating.toFixed(1) %></p>
+            <% } else { %>
+              <p class="text-gray-400 mt-1 text-xs">New</p>
+            <% } %>
+          </div>
+        </a>
+      <% }) %>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    const searchInput = document.getElementById("vendorSearch");
+    const vendorCards = document.querySelectorAll(".vendor-card");
+    const noResultsMsg = document.getElementById("noResultsMsg");
+    searchInput.addEventListener("input", () => {
+      const q = searchInput.value.toLowerCase().trim();
+      let any = false;
+      vendorCards.forEach(c => {
+        const match = (c.dataset.name || "").includes(q);
+        c.style.display = match ? "" : "none";
+        if (match) any = true;
+      });
+      noResultsMsg.classList.toggle("hidden", any);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Analytics — Sabjiwala Seller</title>
+</head>
+<body class="sw-page">
+  <%- include('../partials/navbar') %>
+  <main class="sw-main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <div class="flex items-center gap-3 mb-8 anim-fade-up">
+      <span class="text-3xl">📊</span>
+      <div>
+        <h1 class="sw-heading text-2xl sm:text-3xl">Sales Analytics</h1>
+        <p class="text-gray-500 text-sm mt-1"><%= (seller && (seller.shopName || seller.name)) ? (seller.shopName || seller.name) : 'Seller' %></p>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
+      <% [
+        ['📦','Total Orders',(summary&&summary.totalOrders)||0,'text-gray-800','bg-gray-50'],
+        ['⏳','Pending',(summary&&summary.pendingOrders)||0,'text-yellow-700','bg-yellow-50'],
+        ['✅','Completed',(summary&&summary.completedOrders)||0,'text-green-700','bg-green-50'],
+        ['💰','Earnings','₹'+((summary&&summary.totalEarnings)||0),'text-blue-700','bg-blue-50'],
+      ].forEach(([ico,label,val,textCls,bgCls], i) => { %>
+        <div class="sw-card p-5 sm:p-6 anim-fade-up" style="animation-delay:<%=i*0.08%>s">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-2xl"><%= ico %></span>
+            <p class="text-gray-500 text-xs sm:text-sm font-semibold"><%= label %></p>
+          </div>
+          <p class="text-2xl sm:text-3xl font-black <%= textCls %>" style="font-family:'Syne',sans-serif"><%= val %></p>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="sw-card overflow-hidden anim-fade-up delay-400">
+      <div class="px-6 py-4 border-b border-green-50">
+        <h2 class="font-bold text-gray-800 text-lg" style="font-family:'Syne',sans-serif">📋 Recent Sales</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="sw-table min-w-[700px]">
+          <thead>
+            <tr><th>Customer</th><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th><th>Status</th><th>Date</th></tr>
+          </thead>
+          <tbody>
+            <% const _recent = Array.isArray(recentOrders) ? recentOrders : []; %>
+            <% if (_recent.length === 0) { %>
+              <tr><td colspan="7" class="text-center py-10 text-gray-400">No recent orders found.</td></tr>
+            <% } else { %>
+              <% _recent.forEach(order => { %>
+                <tr>
+                  <td class="font-semibold"><%= order.customerName||'' %></td>
+                  <td><%= order.productName||'' %></td>
+                  <td><%= order.qty||0 %> kg</td>
+                  <td>₹<%= Number(order.price||0) %></td>
+                  <td class="font-bold text-green-700">₹<%= Number(order.subtotal||0) %></td>
+                  <td><span class="sw-badge <%= order.status==='Delivered'?'sw-badge-green':order.status==='Cancelled'?'sw-badge-red':'sw-badge-yellow' %>"><%= order.status||'' %></span></td>
+                  <td class="text-gray-400 text-xs"><%= order.createdAt ? new Date(order.createdAt).toDateString() : '' %></td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+</body>
+</html>

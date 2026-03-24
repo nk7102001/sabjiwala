@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>Saved Addresses — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('partials/navbar') %>
+  <main class="sw-main max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+    <div class="flex items-center gap-3 mb-8 anim-fade-up">
+      <span class="text-3xl">📍</span>
+      <h1 class="sw-heading text-2xl sm:text-3xl">Saved Addresses</h1>
+    </div>
+
+    <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length) { %>
+      <div class="sw-alert sw-alert-success mb-5 anim-fade-up">✅ <%= Array.isArray(success_msg) ? success_msg.join(' · ') : success_msg %></div>
+    <% } %>
+    <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length) { %>
+      <div class="sw-alert sw-alert-error mb-5 anim-fade-up">⚠️ <%= Array.isArray(error_msg) ? error_msg.join(' · ') : error_msg %></div>
+    <% } %>
+
+    <!-- Saved Addresses Grid -->
+    <% const _addresses = Array.isArray(addresses) ? addresses : []; %>
+    <% if (_addresses.length > 0) { %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+        <% _addresses.forEach((addr, i) => { %>
+          <div class="sw-card p-5 relative anim-fade-up" style="animation-delay:<%=i*0.07%>s">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center text-sm">
+                  <%= addr.label === 'Home' ? '🏠' : addr.label === 'Office' ? '🏢' : '📍' %>
+                </div>
+                <span class="font-bold text-green-700 text-sm" style="font-family:'Syne',sans-serif"><%= addr.label || 'Address' %></span>
+              </div>
+              <form action="/address/delete/<%= addr._id %>" method="POST">
+                <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-semibold transition" title="Delete">✕ Remove</button>
+              </form>
+            </div>
+            <div class="text-sm text-gray-600 space-y-1">
+              <p class="font-semibold text-gray-800"><%= addr.name || '' %></p>
+              <p class="text-gray-500"><%= addr.phone || '' %></p>
+              <p><%= addr.street || '' %></p>
+              <p><%= addr.city || '' %><% if(addr.state){%>, <%= addr.state %><% } %> — <%= addr.pincode || '' %></p>
+              <p class="text-gray-400"><%= addr.country || 'India' %></p>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="sw-card p-10 text-center mb-10 anim-scale-in">
+        <div class="text-5xl mb-3">🗺️</div>
+        <p class="text-gray-400">No saved addresses yet.</p>
+      </div>
+    <% } %>
+
+    <!-- Add Address Form -->
+    <div class="sw-card p-6 sm:p-8 anim-fade-up delay-300">
+      <h2 class="font-bold text-gray-800 text-lg mb-6 flex items-center gap-2" style="font-family:'Syne',sans-serif">
+        <span class="text-xl">➕</span> Add New Address
+      </h2>
+      <form action="/address/saved" method="POST" class="space-y-4" novalidate>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="sw-label">Label</label>
+            <input name="label" placeholder="Home / Office" required class="sw-input" />
+          </div>
+          <div>
+            <label class="sw-label">Full Name</label>
+            <input name="name" placeholder="Recipient name" required class="sw-input" />
+          </div>
+        </div>
+        <div>
+          <label class="sw-label">Phone</label>
+          <input name="phone" placeholder="10-digit phone number" required class="sw-input" />
+        </div>
+        <div>
+          <label class="sw-label">Street Address</label>
+          <input name="street" placeholder="123, Main Street" required class="sw-input" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="sw-label">City</label>
+            <input name="city" placeholder="Mumbai" required class="sw-input" />
+          </div>
+          <div>
+            <label class="sw-label">State</label>
+            <input name="state" placeholder="Maharashtra" required class="sw-input" />
+          </div>
+          <div>
+            <label class="sw-label">Pincode</label>
+            <input name="pincode" placeholder="400001" required class="sw-input" />
+          </div>
+        </div>
+        <div>
+          <label class="sw-label">Country</label>
+          <input name="country" placeholder="India" value="India" class="sw-input" />
+        </div>
+        <button type="submit" class="sw-btn sw-btn-primary px-8 py-3">💾 Save Address</button>
+      </form>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>

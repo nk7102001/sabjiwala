@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Delivery Dashboard — Sabjiwala</title>
+</head>
+<body class="sw-page" style="background:#f0fdf4">
+  <!-- Delivery Topbar -->
+  <nav class="bg-white border-b border-green-100 px-6 py-3 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+    <div class="flex items-center gap-2">
+      <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-green-600 text-white text-lg">🥬</span>
+      <span style="font-family:'Syne',sans-serif;font-weight:800" class="text-lg text-gray-800">Sabji<span class="text-yellow-500">wala</span></span>
+      <span class="sw-badge sw-badge-blue ml-1">Delivery</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="text-right hidden sm:block">
+        <p class="text-xs text-gray-400">Logged in as</p>
+        <p class="text-sm font-bold text-gray-700"><%= deliveryGuy ? deliveryGuy.name : 'Delivery Guy' %></p>
+      </div>
+      <a href="/delivery/logout" class="sw-btn sw-btn-danger px-4 py-2 text-sm">Logout</a>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Welcome Banner -->
+    <div class="relative overflow-hidden rounded-2xl mb-8 anim-fade-up"
+         style="background: linear-gradient(135deg,#2563eb 0%,#1d4ed8 60%,#1e40af 100%)">
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-white"></div>
+      </div>
+      <div class="relative p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <p class="text-blue-300 text-sm mb-1">Ready to deliver?</p>
+          <h1 class="text-2xl sm:text-3xl font-black text-white" style="font-family:'Syne',sans-serif">
+            Welcome, <%= deliveryGuy ? deliveryGuy.name : 'Delivery Guy' %>! 🚴
+          </h1>
+          <p class="text-blue-200 text-sm mt-1">Your dashboard for managing deliveries</p>
+        </div>
+        <div class="flex-shrink-0">
+          <img src="<%= (deliveryGuy && deliveryGuy.profilePic) ? deliveryGuy.profilePic : '' %>"
+            class="<%= (deliveryGuy && deliveryGuy.profilePic) ? 'w-16 h-16 rounded-2xl object-cover border-4 border-white/30' : 'hidden' %>" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-3 gap-4 mb-8 anim-fade-up delay-100">
+      <% [
+        ['📦','Active Orders',(Array.isArray(orders)?orders:[]).filter(o=>o.status!=='Delivered'&&o.status!=='Cancelled').length,'text-blue-700'],
+        ['💰','Today Earnings','₹0','text-green-700'],
+        ['✅','Delivered',(Array.isArray(orders)?orders:[]).filter(o=>o.status==='Delivered').length,'text-purple-700'],
+      ].forEach(([ico,label,val,cls]) => { %>
+        <div class="sw-card p-4 text-center">
+          <p class="text-xl mb-1"><%= ico %></p>
+          <p class="text-xs text-gray-400 font-semibold mb-1"><%= label %></p>
+          <p class="font-black text-lg <%= cls %>" style="font-family:'Syne',sans-serif"><%= val %></p>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Active Orders -->
+      <div class="md:col-span-2 sw-card overflow-hidden anim-fade-up delay-200">
+        <div class="px-5 py-4 border-b border-green-50 flex items-center justify-between">
+          <h2 class="font-bold text-gray-800" style="font-family:'Syne',sans-serif">📋 Active Orders</h2>
+          <span class="sw-badge sw-badge-blue"><%= (Array.isArray(orders)?orders:[]).length %></span>
+        </div>
+        <% const _orders = Array.isArray(orders) ? orders : []; %>
+        <% if (_orders.length === 0) { %>
+          <div class="p-10 text-center">
+            <div class="text-5xl mb-3">😴</div>
+            <p class="text-gray-400">No active orders. Time to rest!</p>
+          </div>
+        <% } else { %>
+          <div class="divide-y divide-green-50 max-h-96 overflow-y-auto">
+            <% _orders.forEach(order => { %>
+              <div class="p-4 hover:bg-green-50/50 transition-colors">
+                <div class="flex items-start justify-between gap-2 mb-2">
+                  <span class="font-mono text-xs text-gray-400">#<%= (order._id||order.id||'').toString().slice(-8) %></span>
+                  <span class="sw-badge <%= order.status==='Assigned'?'sw-badge-blue':order.status==='Accepted'?'sw-badge-yellow':order.status==='Picked Up'?'sw-badge-green':order.status==='Delivered'?'sw-badge-green':'sw-badge-red' %>">
+                    <%= order.status %>
+                  </span>
+                </div>
+                <p class="text-sm font-semibold text-gray-700 mb-0.5">
+                  👤 <%= order.customer || (order.user&&order.user.name) || (order.guestInfo&&order.guestInfo.name) || 'Customer' %>
+                </p>
+                <p class="text-xs text-gray-500 mb-0.5">
+                  📍 <%= order.address || (order.shippingAddress && `${order.shippingAddress.street}, ${order.shippingAddress.city}`) || 'Address N/A' %>
+                </p>
+                <p class="text-xs text-gray-500 mb-3">💰 Total: ₹<%= Number(order.total||0) %></p>
+                <form action="/delivery/order/<%= order._id||order.id %>/status" method="POST" class="flex gap-2">
+                  <% if (order.status === 'Assigned') { %>
+                    <button type="submit" name="status" value="Accepted" class="sw-btn sw-btn-yellow px-3 py-1.5 text-xs flex-1">✅ Accept</button>
+                    <button type="submit" name="status" value="Cancelled" class="sw-btn sw-btn-danger px-3 py-1.5 text-xs">❌</button>
+                  <% } else if (order.status === 'Accepted') { %>
+                    <button type="submit" name="status" value="Picked Up" class="sw-btn sw-btn-primary px-3 py-1.5 text-xs flex-1">📦 Picked Up</button>
+                  <% } else if (order.status === 'Picked Up') { %>
+                    <button type="submit" name="status" value="Delivered" class="sw-btn sw-btn-primary px-3 py-1.5 text-xs flex-1">🎉 Mark Delivered</button>
+                  <% } %>
+                </form>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Right column: Profile + Notifications -->
+      <div class="space-y-6">
+        <!-- Profile Card -->
+        <div class="sw-card p-5 anim-fade-up delay-300">
+          <h2 class="font-bold text-gray-800 mb-4 text-sm" style="font-family:'Syne',sans-serif">👤 Profile</h2>
+          <div class="space-y-2 text-sm">
+            <% [['Name',deliveryGuy&&deliveryGuy.name],['Mobile',deliveryGuy&&deliveryGuy.mobile],['Email',deliveryGuy&&deliveryGuy.email]].forEach(([k,v]) => { %>
+              <div class="flex justify-between">
+                <span class="text-gray-400"><%= k %></span>
+                <span class="font-semibold text-gray-700 text-xs"><%= v||'—' %></span>
+              </div>
+            <% }) %>
+          </div>
+          <a href="/delivery/profile/edit" class="sw-btn sw-btn-outline w-full py-2 text-xs mt-4">✏️ Edit Profile</a>
+        </div>
+
+        <!-- Notifications -->
+        <div class="sw-card p-5 anim-fade-up delay-400">
+          <h2 class="font-bold text-gray-800 mb-4 text-sm" style="font-family:'Syne',sans-serif">🔔 Notifications</h2>
+          <div class="bg-gray-50 rounded-xl p-3 text-xs text-gray-400 text-center">No new notifications.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

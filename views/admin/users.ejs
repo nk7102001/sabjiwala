@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Registered Users — Admin</title>
+</head>
+<body class="sw-page" style="background:#f0fdf4">
+  <nav class="bg-gray-900 text-white px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+    <a href="/admin/dashboard" style="font-family:'Syne',sans-serif;font-weight:800" class="text-lg">Sabjiwala <span class="text-green-400">Admin</span></a>
+    <div class="flex gap-2">
+      <a href="/admin/dashboard" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">🏠 Dashboard</a>
+      <a href="/admin/sellers" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">🛒 Sellers</a>
+      <a href="/admin/orders" class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">📦 Orders</a>
+    </div>
+  </nav>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center gap-3 mb-6 anim-fade-up">
+      <span class="text-3xl">👥</span>
+      <h1 class="sw-heading text-2xl">Registered Users</h1>
+    </div>
+    <div class="sw-card overflow-hidden anim-fade-up delay-100">
+      <div class="overflow-x-auto">
+        <table class="sw-table min-w-[600px]">
+          <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody>
+            <% const _users = Array.isArray(users) ? users : []; %>
+            <% if (_users.length === 0) { %>
+              <tr><td colspan="5" class="text-center py-10 text-gray-400">No users found.</td></tr>
+            <% } else { %>
+              <% _users.forEach((u, i) => { %>
+                <tr>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold flex-shrink-0">
+                        <%= u.name ? u.name[0].toUpperCase() : 'U' %>
+                      </div>
+                      <span class="font-semibold"><%= u.name||'' %></span>
+                    </div>
+                  </td>
+                  <td class="text-gray-500 text-sm"><%= u.email||'' %></td>
+                  <td class="text-gray-500 text-sm"><%= u.phone||u.mobile||'—' %></td>
+                  <td class="text-gray-400 text-xs"><%= u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '' %></td>
+                  <td>
+                    <form action="/admin/users/<%= u._id %>/delete" method="POST"
+                          onsubmit="return confirm('Delete this user?')">
+                      <button class="sw-btn sw-btn-danger px-3 py-1.5 text-xs">🗑️ Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

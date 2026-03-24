@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title><%= vendor && vendor.shopName ? vendor.shopName : 'Vendor' %> — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('partials/navbar') %>
+
+  <!-- Vendor Hero -->
+  <section class="sw-hero-bg border-b border-green-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14">
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 anim-fade-up">
+        <div class="relative flex-shrink-0">
+          <% if (vendor && vendor.shopPhoto) { %>
+            <img src="<%= vendor.shopPhoto %>" alt="<%= vendor.shopName %>"
+              class="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover shadow-xl border-4 border-white" />
+          <% } else { %>
+            <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl bg-green-200 flex items-center justify-center text-5xl shadow-xl border-4 border-white">🏪</div>
+          <% } %>
+          <span class="absolute -bottom-2 -right-2 w-7 h-7 bg-green-500 rounded-full flex items-center justify-center text-white text-sm border-2 border-white">✓</span>
+        </div>
+        <div>
+          <h1 class="sw-heading text-2xl sm:text-3xl lg:text-4xl mb-2"><%= vendor && vendor.shopName ? vendor.shopName : 'Vendor' %></h1>
+          <div class="flex flex-wrap gap-3 items-center">
+            <% if (vendor && vendor.avgRating) { %>
+              <span class="sw-badge sw-badge-yellow">⭐ <%= vendor.avgRating.toFixed(1) %> Rating</span>
+            <% } else { %>
+              <span class="sw-badge sw-badge-green">🆕 New Vendor</span>
+            <% } %>
+            <span class="sw-badge sw-badge-green">🟢 Open</span>
+            <% if (vendor && vendor.city) { %><span class="text-sm text-gray-500">📍 <%= vendor.city %></span><% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <% const _products = Array.isArray(products) ? products : []; %>
+    <% if (_products.length === 0) { %>
+      <div class="sw-card p-12 text-center anim-scale-in">
+        <div class="text-5xl mb-4">📦</div>
+        <h3 style="font-family:'Syne',sans-serif" class="text-xl font-bold text-gray-600 mb-2">No Products Listed</h3>
+        <p class="text-gray-400">This vendor hasn't added any products yet.</p>
+      </div>
+    <% } else { %>
+      <h2 class="sw-heading text-xl mb-6 anim-fade-up">Available Products (<%= _products.length %>)</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+        <% _products.forEach((p, i) => { %>
+          <div class="sw-card overflow-hidden flex flex-col anim-fade-up" style="animation-delay:<%=i*0.07%>s">
+            <div class="relative overflow-hidden bg-green-50 h-44">
+              <% if (p.imageUrl) { %>
+                <img src="<%= p.imageUrl %>" alt="<%= p.name || 'Product' %>"
+                  class="w-full h-full object-cover hover:scale-110 transition-transform duration-500" loading="lazy" />
+              <% } else { %>
+                <div class="w-full h-full flex items-center justify-center text-5xl">🥦</div>
+              <% } %>
+              <% const qty = Number(p.availableQty||0); %>
+              <% if (qty === 0) { %>
+                <div class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <span class="sw-badge sw-badge-red text-sm px-4 py-1.5">Out of Stock</span>
+                </div>
+              <% } else if (qty <= 5) { %>
+                <span class="absolute top-2 right-2 sw-badge sw-badge-yellow">⚡ Only <%= qty %> left</span>
+              <% } else { %>
+                <span class="absolute top-2 right-2 sw-badge sw-badge-green">✅ In Stock</span>
+              <% } %>
+            </div>
+            <div class="p-4 flex flex-col flex-1">
+              <h3 class="font-bold text-gray-800 text-base line-clamp-1 mb-1" style="font-family:'Syne',sans-serif"><%= p.name || 'Product' %></h3>
+              <p class="text-green-600 font-black text-lg mb-3">₹<%= Number(p.pricePerKg||0) %><span class="text-gray-400 text-xs font-normal">/kg</span></p>
+
+              <% if (qty > 0) { %>
+                <form onsubmit="addToCart(event)" class="mt-auto">
+                  <input type="hidden" name="vendorId" value="<%= vendor&&vendor._id?vendor._id:'' %>">
+                  <input type="hidden" name="vendorName" value="<%= vendor&&vendor.shopName?vendor.shopName:'' %>">
+                  <input type="hidden" name="productId" value="<%= p._id %>">
+                  <input type="hidden" name="productName" value="<%= p.name||'' %>">
+                  <input type="hidden" name="price" value="<%= Number(p.pricePerKg||0) %>">
+                  <div class="flex items-center gap-2">
+                    <div class="sw-stepper flex-1">
+                      <button type="button" class="sw-stepper-btn" onclick="this.nextElementSibling.value=Math.max(1,+this.nextElementSibling.value-1)">−</button>
+                      <input type="number" name="qty" value="1" min="1" max="<%= qty %>" class="sw-stepper-input flex-1 min-w-0" />
+                      <button type="button" class="sw-stepper-btn" onclick="this.previousElementSibling.value=Math.min(<%= qty %>,+this.previousElementSibling.value+1)">+</button>
+                    </div>
+                    <button type="submit" class="sw-btn sw-btn-primary px-3 py-2 text-sm">Add 🛒</button>
+                  </div>
+                </form>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    function addToCart(e) {
+      e.preventDefault();
+      const f = e.target;
+      const item = {
+        vendorId: f.vendorId.value, vendorName: f.vendorName.value,
+        productId: f.productId.value, productName: f.productName.value,
+        price: parseFloat(f.price.value)||0, qty: parseInt(f.qty.value,10)||1
+      };
+      let cart = [];
+      try { cart = JSON.parse(localStorage.getItem("cart")||"[]"); if(!Array.isArray(cart)) cart=[]; } catch { cart=[]; }
+      const idx = cart.findIndex(i => i.vendorId===item.vendorId && i.productId===item.productId);
+      if (idx > -1) cart[idx].qty += item.qty; else cart.push(item);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      window.dispatchEvent(new Event("cartUpdated"));
+      showToast(`✅ ${item.productName} added to cart!`);
+    }
+    function showToast(msg) {
+      const t = document.createElement("div");
+      t.className = "sw-toast"; t.innerHTML = msg;
+      document.body.appendChild(t);
+      setTimeout(() => { t.style.opacity="0"; t.style.transition="opacity .3s"; setTimeout(()=>t.remove(),300); }, 2700);
+    }
+  </script>
+</body>
+</html>

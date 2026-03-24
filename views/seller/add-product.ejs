@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head') %>
+  <title>Add Product — Sabjiwala Seller</title>
+</head>
+<body class="sw-page">
+  <%- include('../partials/navbar') %>
+  <main class="sw-main max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <div class="flex items-center gap-3 mb-8 anim-fade-up">
+      <span class="text-3xl">➕</span>
+      <h1 class="sw-heading text-2xl sm:text-3xl">Add New Product</h1>
+    </div>
+
+    <div class="sw-card p-6 sm:p-8 anim-fade-up delay-100">
+      <form action="/seller/products/add" method="POST" enctype="multipart/form-data" class="space-y-5" novalidate>
+        <div>
+          <label class="sw-label">Product Name</label>
+          <input type="text" name="name" placeholder="e.g. Fresh Tomatoes" required class="sw-input" />
+        </div>
+        <div>
+          <label class="sw-label">Description</label>
+          <textarea name="description" rows="3" placeholder="Short description of the product" class="sw-input resize-none"></textarea>
+        </div>
+        <div>
+          <label class="sw-label">Category</label>
+          <input type="text" name="category" placeholder="e.g. Vegetables, Fruits" required class="sw-input" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="sw-label">Price Per Kg (₹)</label>
+            <input type="number" name="pricePerKg" step="0.01" min="0" placeholder="40" required class="sw-input" />
+          </div>
+          <div>
+            <label class="sw-label">Available Qty (Kg)</label>
+            <input type="number" name="availableQty" step="0.1" min="0" placeholder="100" required class="sw-input" />
+          </div>
+        </div>
+        <div>
+          <label class="sw-label">Product Image</label>
+          <div class="relative border-2 border-dashed border-green-200 rounded-xl p-6 text-center hover:border-green-400 transition-colors cursor-pointer" id="dropzone">
+            <input type="file" name="image" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="previewImage(this)" />
+            <div id="preview-placeholder">
+              <div class="text-4xl mb-2">📸</div>
+              <p class="text-sm text-gray-500">Click or drag image here</p>
+              <p class="text-xs text-gray-400 mt-1">PNG, JPG, WEBP up to 5MB</p>
+            </div>
+            <img id="img-preview" class="hidden mx-auto max-h-40 rounded-xl mt-2" />
+          </div>
+        </div>
+        <div class="pt-2">
+          <button type="submit" class="sw-btn sw-btn-primary w-full py-3.5 text-base">✅ Add Product</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+  <script>
+    function previewImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('preview-placeholder').classList.add('hidden');
+        const img = document.getElementById('img-preview');
+        img.src = e.target.result;
+        img.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>

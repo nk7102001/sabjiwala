@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+  <title>Privacy Policy — Sabjiwala</title>
+</head>
+<body class="sw-page">
+  <%- include('partials/navbar') %>
+  <main class="sw-main max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+    <div class="anim-fade-up mb-8">
+      <span class="text-4xl block mb-4">🔒</span>
+      <h1 class="sw-heading text-3xl sm:text-4xl">Privacy Policy</h1>
+      <p class="text-gray-400 text-sm mt-2">Last updated: January 2025</p>
+    </div>
+
+    <div class="sw-card p-6 sm:p-10 anim-fade-up delay-100">
+      <p class="text-gray-600 leading-relaxed mb-8">
+        Your privacy is important to us. This Privacy Policy explains how <strong class="text-green-700">Sabjiwala</strong> collects, uses, and protects your personal information when you use our services.
+      </p>
+
+      <% [
+        ['📋','Information We Collect','We collect information you provide directly to us when registering, placing orders, or contacting support — including your name, email, phone number, and delivery address.'],
+        ['🎯','How We Use Your Information','We use your information to process orders, communicate important updates, improve our services, and comply with legal obligations.'],
+        ['🛡️','Data Security','We implement reasonable security measures to protect your personal information against unauthorized access and disclosure.'],
+        ['⚙️','Your Choices','You can update or delete your personal information by contacting us at support@sabjiwala.com.'],
+        ['🍪','Cookies','We use cookies to improve your browsing experience and analyze site traffic. You can disable cookies in your browser settings.'],
+        ['📞','Contact Us','For privacy-related queries or to exercise your rights, please contact our support team.'],
+      ].forEach(([ico,title,desc], i) => { %>
+        <div class="mb-7 pb-7 <%= i < 5 ? 'border-b border-green-50' : '' %> anim-fade-up" style="animation-delay:<%=(i+2)*0.07%>s">
+          <h2 class="flex items-center gap-2 font-bold text-lg text-gray-800 mb-2" style="font-family:'Syne',sans-serif">
+            <span class="text-xl"><%= ico %></span> <%= title %>
+          </h2>
+          <p class="text-gray-600 leading-relaxed text-sm sm:text-base"><%= desc %></p>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>
